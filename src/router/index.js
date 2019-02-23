@@ -38,6 +38,19 @@ export const constantRouterMap = [
       meta: { title: 'Dashboard', icon: 'example' }
     }]
   },
+  {
+    path: '/admin',
+    component: Layout,
+    name: 'AdminUser',
+    children: [
+      {
+        path: 'user',
+        name: '管理员',
+        component: () => import('@/views/user/index'),
+        meta: { title: '会员管理', icon: 'form' }
+      }
+    ]
+  },
 
   {
     path: '/example',
@@ -73,20 +86,6 @@ export const constantRouterMap = [
       }
     ]
   },
-
-  {
-    path: '/admin',
-    component: Layout,
-    children: [
-      {
-        path: 'user',
-        name: '管理员',
-        component: () => import('@/views/test/index'),
-        meta: { title: '测试', icon: 'form' }
-      }
-    ]
-  },
-
   {
     path: '/nested',
     component: Layout,
