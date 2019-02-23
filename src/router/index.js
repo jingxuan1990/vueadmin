@@ -74,6 +74,19 @@ export const constantRouterMap = [
   },
 
   {
+    path: '/admin',
+    component: Layout,
+    children: [
+      {
+        path: 'user',
+        name: '管理员',
+        component: () => import('@/views/test/index'),
+        meta: { title: '测试', icon: 'form' }
+      }
+    ]
+  },
+
+  {
     path: '/nested',
     component: Layout,
     redirect: '/nested/menu1',
