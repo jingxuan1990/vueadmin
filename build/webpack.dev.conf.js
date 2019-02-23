@@ -37,7 +37,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     port: PORT || config.dev.port,
     open: config.dev.autoOpenBrowser,
     overlay: config.dev.errorOverlay
-      ? { warnings: false, errors: true }
+      ? {warnings: false, errors: true}
       : false,
     publicPath: config.dev.assetsPublicPath,
     proxy: config.dev.proxyTable,
@@ -57,7 +57,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
       template: 'index.html',
       inject: true,
       favicon: resolve('favicon.ico'),
-      title: 'vue-admin-template'
+      title: 'SPA美容养生后台管理系统'
     })
   ]
 })
@@ -80,7 +80,7 @@ module.exports = new Promise((resolve, reject) => {
             messages: [
               `Your application is running here: http://${
                 devWebpackConfig.devServer.host
-              }:${port}`
+                }:${port}`
             ]
           },
           onErrors: config.dev.notifyOnErrors
