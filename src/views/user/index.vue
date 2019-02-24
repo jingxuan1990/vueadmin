@@ -171,7 +171,7 @@ export default {
       imageUrl: '',
       listQuery: {
         page: 1,
-        limit: 20,
+        limit: 20
       },
       levelOptions: [{ 'label': '普通会员', value: '1' }, { 'label': '青铜会员', value: '2' }, { 'label': '黄精会员', value: '3' }, { 'label': '铂金会员', value: '4' }],
       showReviewer: false,
