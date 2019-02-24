@@ -29,6 +29,6 @@ Mock.mock(/\/article\/create/, 'post', articleAPI.createArticle)
 Mock.mock(/\/article\/update/, 'post', articleAPI.updateArticle)
 
 // Table
-Mock.mock(/\/table\/list/, 'get', tableAPI.list)
+// Mock.mock(/\/table\/list/, 'get', tableAPI.list)
 
 export default Mock
