@@ -10,18 +10,18 @@ Vue.use(Router)
 import Layout from '../views/layout/Layout'
 
 /**
-* hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
-* alwaysShow: true               if set true, will always show the root menu, whatever its child routes length
-*                                if not set alwaysShow, only more than one route under the children
-*                                it will becomes nested mode, otherwise not show the root menu
-* redirect: noredirect           if `redirect:noredirect` will no redirect in the breadcrumb
-* name:'router-name'             the name is used by <keep-alive> (must set!!!)
-* meta : {
+ * hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
+ * alwaysShow: true               if set true, will always show the root menu, whatever its child routes length
+ *                                if not set alwaysShow, only more than one route under the children
+ *                                it will becomes nested mode, otherwise not show the root menu
+ * redirect: noredirect           if `redirect:noredirect` will no redirect in the breadcrumb
+ * name:'router-name'             the name is used by <keep-alive> (must set!!!)
+ * meta : {
     title: 'title'               the name show in subMenu and breadcrumb (recommend set)
     icon: 'svg-name'             the icon show in the sidebar
     breadcrumb: false            if false, the item will hidden in breadcrumb(default is true)
   }
-**/
+ **/
 export const constantRouterMap = [
   { path: '/login', component: () => import('@/views/login/index'), hidden: true },
   { path: '/404', component: () => import('@/views/404'), hidden: true },
@@ -35,7 +35,7 @@ export const constantRouterMap = [
     children: [{
       path: 'dashboard',
       component: () => import('@/views/dashboard/index'),
-      meta: { title: '首页', icon: 'example' }
+      meta: { title: 'Dashboard', icon: 'example' }
     }]
   },
   {
@@ -45,8 +45,48 @@ export const constantRouterMap = [
     children: [
       {
         path: 'user',
+        name: '管理员',
         component: () => import('@/views/user/index'),
-        meta: { title: '会员管理', icon: 'form' }
+        meta: { title: '会员管理', icon: 'user' }
+      }
+    ]
+  },
+  {
+    path: '/suite',
+    component: Layout,
+    name: 'suite',
+    meta: { title: '套间管理', icon: 'example' },
+    children: [
+      {
+        path: 'allSuite',
+        name: 'allSuite',
+        component: () => import('@/views/suite/allSuite/index'),
+        meta: { title: '所有套间' }
+      },
+      {
+        path: 'addSuite',
+        name: 'addSuite',
+        component: () => import('@/views/suite/addSuite/index'),
+        meta: { title: '添加套间'}
+      },
+      {
+        path: 'deleSuite',
+        name: 'deleSuite',
+        component: () => import('@/views/suite/deleSuite/index'),
+        meta: { title: '删除套间'}
+      }
+
+    ]
+  },
+  {
+    path: '/category',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'category',
+        component: () => import('@/views/category/index'),
+        meta: { title: '商品分类', icon: 'table' }
       }
     ]
   },
@@ -56,103 +96,69 @@ export const constantRouterMap = [
     component: Layout,
     redirect: '/example/table',
     name: 'Example',
-    meta: { title: 'Example', icon: 'example' },
+    meta: { title: '商品管理', icon: 'tree' },
     children: [
       {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/example/table/index'),
-        meta: { title: 'Table', icon: 'table' }
+        path: 'goods',
+        name: 'Goods',
+        component: () => import('@/views/example/goods/index'),
+        meta: { title: '所有商品'}
       },
       {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/example/tree/index'),
-        meta: { title: 'Tree', icon: 'tree' }
+        path: 'addGoods',
+        name: 'addGoods',
+        component: () => import('@/views/example/addGoods/index'),
+        meta: { title: '添加商品'}
+      },
+      {
+        path: 'editGoods',
+        name: 'editGoods',
+        component: () => import('@/views/example/editGoods/index'),
+        meta: { title: '编辑商品'}
+      },
+      {
+        path: 'deleGoods',
+        name: 'deleGoods',
+        component: () => import('@/views/example/deleGoods/index'),
+        meta: { title: '删除商品'}
       }
     ]
   },
 
   {
-    path: '/form',
+    path: '/order',
     component: Layout,
     children: [
       {
         path: 'index',
-        name: 'Form',
-        component: () => import('@/views/form/index'),
-        meta: { title: 'Form', icon: 'form' }
+        name: 'order',
+        component: () => import('@/views/order/index'),
+        meta: { title: '订单列表', icon: 'form' }
       }
     ]
   },
   {
-    path: '/nested',
-    component: Layout,
-    redirect: '/nested/menu1',
-    name: 'Nested',
-    meta: {
-      title: 'Nested',
-      icon: 'nested'
-    },
-    children: [
-      {
-        path: 'menu1',
-        component: () => import('@/views/nested/menu1/index'), // Parent router-view
-        name: 'Menu1',
-        meta: { title: 'Menu1' },
-        children: [
-          {
-            path: 'menu1-1',
-            component: () => import('@/views/nested/menu1/menu1-1'),
-            name: 'Menu1-1',
-            meta: { title: 'Menu1-1' }
-          },
-          {
-            path: 'menu1-2',
-            component: () => import('@/views/nested/menu1/menu1-2'),
-            name: 'Menu1-2',
-            meta: { title: 'Menu1-2' },
-            children: [
-              {
-                path: 'menu1-2-1',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-1'),
-                name: 'Menu1-2-1',
-                meta: { title: 'Menu1-2-1' }
-              },
-              {
-                path: 'menu1-2-2',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-2'),
-                name: 'Menu1-2-2',
-                meta: { title: 'Menu1-2-2' }
-              }
-            ]
-          },
-          {
-            path: 'menu1-3',
-            component: () => import('@/views/nested/menu1/menu1-3'),
-            name: 'Menu1-3',
-            meta: { title: 'Menu1-3' }
-          }
-        ]
-      },
-      {
-        path: 'menu2',
-        component: () => import('@/views/nested/menu2/index'),
-        meta: { title: 'menu2' }
-      }
-    ]
-  },
-
-  {
-    path: 'external-link',
+    path: '/safety',
     component: Layout,
     children: [
       {
-        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-        meta: { title: 'External Link', icon: 'link' }
+        path: 'index',
+        name: 'safety',
+        component: () => import('@/views/safety/index'),
+        meta: { title: '安全设置', icon: 'nested' }
       }
     ]
   },
+  // {
+  //   path: 'external-link',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
+  //       meta: { title: 'External Link', icon: 'link' }
+  //     }
+  //   ]
+  // },
 
   { path: '*', redirect: '/404', hidden: true }
 ]

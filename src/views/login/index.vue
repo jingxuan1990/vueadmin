@@ -18,7 +18,7 @@
           name="password"
           auto-complete="on"
           placeholder="请输入您的管理员密码"
-          @keyup.enter.native="handleLogin" />
+          @keyup.enter.native="handleLogin" />  <!--回车键登陆-->
         <span class="show-pwd" @click="showPwd">
           <svg-icon :icon-class="pwdType === 'password' ? 'eye' : 'eye-open'" />
         </span>
@@ -54,8 +54,8 @@ export default {
     }
     return {
       loginForm: {
-        username: '',
-        password: ''
+        username: 'admin',
+        password: '123456'
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -93,7 +93,8 @@ export default {
             this.loading = false
           })
         } else {
-          console.log('error submit!!')
+          this.$alert('用户名或密码有误！','登录失败',{type:'error'});
+          // console.log('error submit!!')
           return false
         }
       })
