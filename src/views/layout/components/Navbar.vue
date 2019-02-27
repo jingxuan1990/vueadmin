@@ -2,7 +2,9 @@
   <div class="navbar">
     <hamburger :toggle-click="toggleSideBar" :is-active="sidebar.opened" class="hamburger-container"/>
     <breadcrumb />
+    <div class="admin">当前用户:{{user}}</div>
     <el-dropdown class="avatar-container" trigger="click">
+      
       <div class="avatar-wrapper">
         <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
         <i class="el-icon-caret-bottom"/>
@@ -27,6 +29,11 @@ import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 
 export default {
+  data(){
+    return{
+      user:"admin"
+    }
+  },
   components: {
     Breadcrumb,
     Hamburger
@@ -51,6 +58,12 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
+.admin{
+  float: right;
+padding-right: 120px;
+font-family:  Courier;
+color: #333;
+}
 .navbar {
   height: 50px;
   line-height: 50px;
