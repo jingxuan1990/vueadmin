@@ -1,15 +1,15 @@
 <template>
   <div>
     <el-tabs type="border-card">
-      
-      <el-tab-pane label="美容护理"> 美容护理 </el-tab-pane>
+      <el-tab-pane label="美容护理"> <el-badge value="new" class="item">
+        <el-button size="small">评论</el-button>
+      </el-badge></el-tab-pane>
       <el-tab-pane label="皮肤保健">皮肤保健</el-tab-pane>
       <el-tab-pane label="水疗">水疗</el-tab-pane>
       <el-tab-pane label="养生服务">养生服务</el-tab-pane>
     </el-tabs>
   </div>
 </template>
-
 
 <style scoped>
 .el-tabs {
@@ -18,8 +18,8 @@
 .item {
   margin-top: 10px;
   margin-right: 100px;
-  
 }
+
 sup{
   top: 8px;
     right: 2px;
