@@ -22,10 +22,10 @@ export default {
     data(){
         return{
             categoryList:[
-                {cid:"1",cname:"王小虎"},
-                {cid:"2",cname:"王虎"},
-                {cid:"3",cname:"王小"},
-                {cid:"4",cname:"小虎"}
+                {cid:"1",cname:"美容护理"},
+                {cid:"2",cname:"身体SPA"},
+                {cid:"3",cname:"中医理疗"},
+                {cid:"4",cname:"食疗"}
             ]
         }
     },
