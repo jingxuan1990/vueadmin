@@ -75,6 +75,9 @@
             <i v-else class="el-icon-plus avatar-uploader-icon"/>
           </el-upload>
         </el-form-item>
+        <el-form-item label="手机号" prop="phone">
+          <el-input v-model="temp.phone" placeholder="11数字位手机号"/>
+        </el-form-item>
         <el-form-item label="真实姓名" prop="name">
           <el-input v-model="temp.name" placeholder="史前风"/>
         </el-form-item>
@@ -176,6 +179,7 @@ export default {
       levelOptions: [{ 'label': '普通会员', value: '1' }, { 'label': '青铜会员', value: '2' }, { 'label': '黄金会员', value: '3' }, { 'label': '铂金会员', value: '4' }],
       showReviewer: false,
       temp: {
+        phone: '',
         user_card: '',
         name: '',
         nick_name: '',
@@ -242,6 +246,7 @@ export default {
     },
     resetTemp() {
       this.temp = {
+        phone: '',
         user_card: '',
         name: '',
         nick_name: '',
@@ -262,10 +267,8 @@ export default {
       console.log('create data')
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          console.log('create data in')
           createUser(this.temp).then(() => {
-            // this.list.unshift(this.temp)
-            // this.dialogFormVisible = false
+            this.dialogFormVisible = false
             this.$notify({
               title: '成功',
               message: '创建会员成功!',

@@ -26,7 +26,7 @@ export function fetchPv(pv) {
 
 export function createUser(data) {
   return request({
-    url: '/article/create',
+    url: '/users',
     method: 'post',
     data
   })
