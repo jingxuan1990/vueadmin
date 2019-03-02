@@ -63,9 +63,11 @@ export default {
     }
   },
   createArticle: () => ({
+    code: 20000,
     data: 'success'
   }),
   updateArticle: () => ({
+    code: 20000,
     data: 'success'
   })
 }

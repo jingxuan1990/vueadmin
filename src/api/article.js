@@ -24,7 +24,7 @@ export function fetchPv(pv) {
   })
 }
 
-export function createArticle(data) {
+export function createUser(data) {
   return request({
     url: '/article/create',
     method: 'post',
