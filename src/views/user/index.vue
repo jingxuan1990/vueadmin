@@ -68,7 +68,7 @@
       <el-table-column label="操作" align="center" width="150px" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">修改</el-button>
-          <el-button size="mini" type="danger" @click="handleModifyStatus(scope.row,'deleted')">删除</el-button>
+          <el-button size="mini" type="danger" @click="handleDelete(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -159,7 +159,7 @@
 </style>
 
 <script>
-import { getUserList, createUser, updateUser } from '@/api/article'
+import { getUserList, createUser, updateUser, deleteUser } from '@/api/article'
 import waves from '@/directive/waves' // Waves directive
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 
@@ -191,6 +191,7 @@ export default {
       levelOptions: [{ 'label': '普通会员', value: '1' }, { 'label': '青铜会员', value: '2' }, { 'label': '黄金会员', value: '3' }, { 'label': '铂金会员', value: '4' }],
       showReviewer: false,
       temp: {
+        id: '',
         phone: '',
         user_card: '',
         name: '',
@@ -232,13 +233,6 @@ export default {
     handleFilter() {
       this.listQuery.page = 1
       this.getList()
-    },
-    handleModifyStatus(row, status) {
-      this.$message({
-        message: '操作成功',
-        type: 'success'
-      })
-      row.status = status
     },
     resetTemp() {
       this.temp = {
@@ -307,14 +301,17 @@ export default {
       })
     },
     handleDelete(row) {
-      this.$notify({
-        title: '成功',
-        message: '删除成功',
-        type: 'success',
-        duration: 2000
+      deleteUser(row.id).then(() => {
+        this.$notify({
+          title: '成功',
+          message: '删除成功',
+          type: 'success',
+          duration: 2000
+        })
+
+        const index = this.list.indexOf(row)
+        this.list.splice(index, 1)
       })
-      const index = this.list.indexOf(row)
-      this.list.splice(index, 1)
     }
   }
 }

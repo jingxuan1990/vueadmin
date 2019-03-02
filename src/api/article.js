@@ -7,18 +7,18 @@ export function getUserList(query) {
   })
 }
 
-export function getUser(id) {
-  return request({
-    url: '/article/detail',
-    method: 'get',
-    params: {id}
-  })
-}
-
 export function createUser(data) {
   return request({
     url: '/users',
     method: 'post',
+    data
+  })
+}
+
+export function deleteUser(data) {
+  return request({
+    url: '/users/' + data,
+    method: 'delete',
     data
   })
 }
