@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.title" placeholder="输入关键字" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter"/>
+      <el-input v-model="searchName" placeholder="输入会员姓名" style="width:180px;" class="filter-item" @keyup.enter.native="handleFilter"/>
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索会员</el-button>
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">增加会员</el-button>
     </div>
@@ -37,7 +37,7 @@
       </el-table-column>
       <el-table-column label="手机号" width="130px" align="center">
         <template slot-scope="scope">
-          <span>{{ 17767264190 }}</span>
+          <span>{{ scope.row.phone }}</span>
         </template>
       </el-table-column>
       <el-table-column label="性别" width="50px" align="center">
@@ -48,6 +48,11 @@
       <el-table-column label="生日" width="150px" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.birth }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="会员级别" width="100px" align="center">
+        <template slot-scope="scope">
+          <span>{{ levelOptions[scope.row.level-1]['label'] }}</span>
         </template>
       </el-table-column>
       <el-table-column label="地址" width="250px">
@@ -119,16 +124,6 @@
       </div>
     </el-dialog>
 
-    <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
-      <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
-        <el-table-column prop="key" label="Channel"/>
-        <el-table-column prop="pv" label="Pv"/>
-      </el-table>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogPvVisible = false">{{ $t('table.confirm') }}</el-button>
-      </span>
-    </el-dialog>
-
   </div>
 </template>
 
@@ -156,10 +151,17 @@
     height: 100px;
     display: block;
   }
+  .filter-container{
+    margin-bottom: 20px;
+  }
+  .filter-item{
+    margin-right: 10px;
+  }
+
 </style>
 
 <script>
-import { getUserList, createUser, updateUser, deleteUser } from '@/api/article'
+import { getUserList, createUser, updateUser, deleteUser, searchUserByName } from '@/api/user'
 import waves from '@/directive/waves' // Waves directive
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 
@@ -184,12 +186,12 @@ export default {
       total: 0,
       listLoading: true,
       imageUrl: '',
+      searchName: '',
       listQuery: {
         page: 1,
         limit: 20
       },
       levelOptions: [{ 'label': '普通会员', value: '1' }, { 'label': '青铜会员', value: '2' }, { 'label': '黄金会员', value: '3' }, { 'label': '铂金会员', value: '4' }],
-      showReviewer: false,
       temp: {
         id: '',
         phone: '',
@@ -198,7 +200,8 @@ export default {
         nick_name: '',
         birth: new Date(),
         address: '',
-        sex: 'F'
+        sex: 'F',
+        level: ''
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -206,14 +209,11 @@ export default {
         update: '修改会员',
         create: '新增会员'
       },
-      dialogPvVisible: false,
-      pvData: [],
       rules: {
         type: [{ required: true, message: 'type is required', trigger: 'change' }],
         timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
         title: [{ required: true, message: 'title is required', trigger: 'blur' }]
-      },
-      downloadLoading: false
+      }
     }
   },
   created() {
@@ -232,17 +232,26 @@ export default {
     },
     handleFilter() {
       this.listQuery.page = 1
-      this.getList()
+      this.listLoading = true
+      searchUserByName({ page: this.listQuery.page, limit: this.listQuery.limit, name: this.searchName }).then(data => {
+        this.list = data.data
+        this.total = data.total
+        setTimeout(() => {
+          this.listLoading = false
+        }, 1.5 * 1000)
+      })
     },
     resetTemp() {
       this.temp = {
+        id: '',
         phone: '',
         user_card: '',
         name: '',
         nick_name: '',
         birth: new Date(),
         address: '',
-        sex: 'F'
+        sex: 'F',
+        level: '1'
       }
     },
     handleCreate() {
@@ -254,7 +263,6 @@ export default {
       })
     },
     createData() {
-      console.log('create data')
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           createUser(this.temp).then(() => {
@@ -265,6 +273,8 @@ export default {
               type: 'success',
               duration: 2000
             })
+
+            this.list.push(this.temp)
           })
         }
       })

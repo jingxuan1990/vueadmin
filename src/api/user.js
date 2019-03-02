@@ -7,6 +7,14 @@ export function getUserList(query) {
   })
 }
 
+export function searchUserByName(data) {
+  return request({
+    url: '/users/search',
+    method: 'post',
+    data
+  })
+}
+
 export function createUser(data) {
   return request({
     url: '/users',
