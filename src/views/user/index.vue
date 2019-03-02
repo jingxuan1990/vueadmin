@@ -15,44 +15,57 @@
       highlight-current-row
       style="width: 100%;"
       @sort-change="sortChange">
-      <el-table-column label="会员卡号" prop="user_card" sortable="custom" align="center" width="65">
+      <el-table-column label="用户ID" prop="id" align="center" width="80px">
+        <template slot-scope="scope">
+          <span>{{ scope.row.id }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="会员卡号" width="130px" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.user_card }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="真实姓名" width="150px" align="center">
+      <el-table-column label="姓名" width="80px" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="昵称" min-width="150px">
+      <el-table-column label="昵称" width="80px" align="center">
         <template slot-scope="scope">
-          <span class="link-type" @click="handleUpdate(scope.row)">{{ scope.row.title }}</span>
-          <el-tag>{{ scope.row.type | typeFilter }}</el-tag>
+          <span>{{ scope.row.nick_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="性别" width="110px" align="center">
+      <el-table-column label="手机号" width="130px" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.author }}</span>
+          <span>{{ 17767264190 }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.importance')" width="80px">
+      <el-table-column label="性别" width="50px" align="center">
         <template slot-scope="scope">
-          <svg-icon v-for="n in +scope.row.importance" :key="n" icon-class="star" class="meta-item__icon"/>
+          <span>{{ scope.row.sex === 'M' ? '男' : '女' }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.readings')" align="center" width="95">
+      <el-table-column label="生日" width="150px" align="center">
         <template slot-scope="scope">
-          <span v-if="scope.row.pageviews" class="link-type" @click="handleFetchPv(scope.row.pageviews)">{{ scope.row.pageviews }}</span>
-          <span v-else>0</span>
+          <span>{{ scope.row.birth }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.status')" class-name="status-col" width="100">
+      <el-table-column label="地址" width="250px">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.status | statusFilter">{{ scope.row.status }}</el-tag>
+          <span>{{ scope.row.address }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.actions')" align="center" width="230" class-name="small-padding fixed-width">
+      <el-table-column label="修改时间" width="180px">
+        <template slot-scope="scope">
+          <span>{{ scope.row.gmt_modified }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="创建时间" width="180px">
+        <template slot-scope="scope">
+          <span>{{ scope.row.gmt_create }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" align="center" width="150px" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">修改</el-button>
           <el-button size="mini" type="danger" @click="handleModifyStatus(scope.row,'deleted')">删除</el-button>
@@ -146,9 +159,8 @@
 </style>
 
 <script>
-import { fetchList, fetchPv, createUser, updateArticle } from '@/api/article'
+import { getUserList, createUser, updateUser } from '@/api/article'
 import waves from '@/directive/waves' // Waves directive
-import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 
 export default {
@@ -209,11 +221,9 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      fetchList(this.listQuery).then(data => {
-        console.log('result=' + JSON.stringify(data))
-        this.list = data.items
+      getUserList(this.listQuery).then(data => {
+        this.list = data.data
         this.total = data.total
-        // Just to simulate the time of the request
         setTimeout(() => {
           this.listLoading = false
         }, 1.5 * 1000)
@@ -229,20 +239,6 @@ export default {
         type: 'success'
       })
       row.status = status
-    },
-    sortChange(data) {
-      const { prop, order } = data
-      if (prop === 'id') {
-        this.sortByID(order)
-      }
-    },
-    sortByID(order) {
-      if (order === 'ascending') {
-        this.listQuery.sort = '+id'
-      } else {
-        this.listQuery.sort = '-id'
-      }
-      this.handleFilter()
     },
     resetTemp() {
       this.temp = {
@@ -280,7 +276,7 @@ export default {
       })
     },
     handleUpdate(row) {
-      this.temp = Object.assign({}, row) // copy obj
+      this.temp = Object.assign({}, row)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -291,8 +287,7 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
-          tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          updateArticle(tempData).then(() => {
+          updateUser(tempData).then(() => {
             for (const v of this.list) {
               if (v.id === this.temp.id) {
                 const index = this.list.indexOf(v)
@@ -320,12 +315,6 @@ export default {
       })
       const index = this.list.indexOf(row)
       this.list.splice(index, 1)
-    },
-    handleFetchPv(pv) {
-      fetchPv(pv).then(response => {
-        this.pvData = response.data.pvData
-        this.dialogPvVisible = true
-      })
     }
   }
 }

@@ -1,26 +1,17 @@
 import request from '@/utils/request'
 
-export function fetchList(query) {
+export function getUserList(query) {
   return request({
-    url: '/article/list',
-    method: 'get',
-    params: query
+    url: '/users/' + query.page + '/' + query.limit,
+    method: 'get'
   })
 }
 
-export function fetchArticle(id) {
+export function getUser(id) {
   return request({
     url: '/article/detail',
     method: 'get',
-    params: { id }
-  })
-}
-
-export function fetchPv(pv) {
-  return request({
-    url: '/article/pv',
-    method: 'get',
-    params: { pv }
+    params: {id}
   })
 }
 
@@ -32,10 +23,10 @@ export function createUser(data) {
   })
 }
 
-export function updateArticle(data) {
+export function updateUser(data) {
   return request({
-    url: '/article/update',
-    method: 'post',
+    url: '/users',
+    method: 'put',
     data
   })
 }
