@@ -38,3 +38,11 @@ export function updateUser(data) {
     data
   })
 }
+
+export function checkUniq(data) {
+  return request({
+    url: '/users/check',
+    method: 'post',
+    data
+  })
+}

@@ -2,8 +2,8 @@
   <div class="app-container">
     <div class="filter-container">
       <el-input v-model="searchName" placeholder="输入会员姓名" style="width:180px;" class="filter-item" @keyup.enter.native="handleFilter"/>
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索会员</el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">增加会员</el-button>
+      <el-button v-waves class="filter-item" plain icon="el-icon-search" @click="handleFilter">搜索会员</el-button>
+      <el-button class="filter-item" style="margin-left: 10px;" type="success" plain icon="el-icon-edit" @click="handleCreate">增加会员</el-button>
     </div>
 
     <el-table
@@ -13,8 +13,7 @@
       border
       fit
       highlight-current-row
-      style="width: 100%;"
-      @sort-change="sortChange">
+      style="width: 100%;">
       <el-table-column label="用户ID" prop="id" align="center" width="80px">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
@@ -83,7 +82,7 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
         <el-form-item label="会员卡号" prop="user_card">
-          <el-input v-model="temp.user_card" placeholder="输入11位的会员卡号"/>
+          <el-input v-model="temp.user_card" placeholder="输入11位的会员卡号" @blur="checkUniq(temp.user_card, 'userCard')"/>
         </el-form-item>
         <el-form-item label="上传头像" prop="photo">
           <el-upload
@@ -161,7 +160,7 @@
 </style>
 
 <script>
-import { getUserList, createUser, updateUser, deleteUser, searchUserByName } from '@/api/user'
+import { getUserList, createUser, updateUser, deleteUser, searchUserByName, checkUniq } from '@/api/user'
 import waves from '@/directive/waves' // Waves directive
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 
@@ -227,7 +226,7 @@ export default {
         this.total = data.total
         setTimeout(() => {
           this.listLoading = false
-        }, 1.5 * 1000)
+        }, 1000)
       })
     },
     handleFilter() {
@@ -238,7 +237,7 @@ export default {
         this.total = data.total
         setTimeout(() => {
           this.listLoading = false
-        }, 1.5 * 1000)
+        }, 1000)
       })
     },
     resetTemp() {
@@ -274,7 +273,7 @@ export default {
               duration: 2000
             })
 
-            this.list.push(this.temp)
+            this.$router.go(0)
           })
         }
       })
@@ -321,6 +320,17 @@ export default {
 
         const index = this.list.indexOf(row)
         this.list.splice(index, 1)
+        this.total = (this.total - 1)
+      })
+    },
+    checkUniq(data, type) {
+      checkUniq({ 'type': type, data: data }).then(result => {
+        console.log('result=' + result)
+        this.$message.error({
+          message: result.msg,
+          type: (result.code === 20000) ? 'success' : 'error',
+          duration: 2000
+        })
       })
     }
   }
