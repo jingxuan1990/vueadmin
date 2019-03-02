@@ -1,15 +1,15 @@
 <template>
   <div>
     <el-tabs type="border-card">
-      <el-tab-pane v-for="(c,i) in goodsList">
+      <el-tab-pane v-for="(c, i) in goodsList">
         <span slot="label">
-          <el-badge :value="c.gList.length">{{c.cname}}</el-badge>
+          <el-badge :value="c.gList.length">{{ c.cname }}</el-badge>
         </span>
 
         <!--内容-->
         <el-row>
           <el-clo v-for="(g,j) in c.gList" :xs="12" :md="6" :lg="4" :xl="3">
-            {{g}}
+            {{ g }}
             <img>
           </el-clo>
         </el-row>

@@ -1,7 +1,8 @@
 import Mock from 'mockjs'
 import userAPI from './user'
-import tableAPI from './table'
+// import tableAPI from './table'
 import articleAPI from './article'
+import transactionAPI from './transaction'
 
 // Fix an issue with setting withCredentials = true, cross-domain request lost cookies
 // https://github.com/nuysoft/Mock/issues/300
@@ -30,5 +31,8 @@ Mock.mock(/\/article\/update/, 'post', articleAPI.updateArticle)
 
 // Table
 // Mock.mock(/\/table\/list/, 'get', tableAPI.list)
+
+// 账单相关
+Mock.mock(/\/transaction\/list/, 'get', transactionAPI.getList)
 
 export default Mock
