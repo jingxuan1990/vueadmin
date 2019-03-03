@@ -39,7 +39,7 @@ export function updateUser(data) {
   })
 }
 
-export function checkUniq(data) {
+export function checkParamUniq(data) {
   return request({
     url: '/users/check',
     method: 'post',

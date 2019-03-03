@@ -93,7 +93,7 @@
           </el-upload>
         </el-form-item>
         <el-form-item label="手机号" prop="phone">
-          <el-input v-model="temp.phone" placeholder="11数字位手机号"/>
+          <el-input v-model="temp.phone" placeholder="11数字位手机号" @blur="checkUniq(temp.phone, 'phone')"/>
         </el-form-item>
         <el-form-item label="真实姓名" prop="name">
           <el-input v-model="temp.name" placeholder="史前风"/>
@@ -160,7 +160,7 @@
 </style>
 
 <script>
-import { getUserList, createUser, updateUser, deleteUser, searchUserByName, checkUniq } from '@/api/user'
+import { getUserList, createUser, updateUser, deleteUser, searchUserByName, checkParamUniq } from '@/api/user'
 import waves from '@/directive/waves' // Waves directive
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 
@@ -324,14 +324,7 @@ export default {
       })
     },
     checkUniq(data, type) {
-      checkUniq({ 'type': type, data: data }).then(result => {
-        console.log('result=' + result)
-        this.$message.error({
-          message: result.msg,
-          type: (result.code === 20000) ? 'success' : 'error',
-          duration: 2000
-        })
-      })
+      checkParamUniq({ 'type': type, data: data })
     }
   }
 }
