@@ -80,9 +80,9 @@
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="80px" style="width: 400px; margin-left:50px;">
         <el-form-item label="会员卡号" prop="user_card">
-          <el-input v-model="temp.user_card" placeholder="输入11位的会员卡号" @blur="checkUniq(temp.user_card, 'userCard')"/>
+          <el-input v-model.number="temp.user_card" placeholder="以数字4开头的11位有效数字" @blur="checkUniq(temp.user_card, 'userCard')"/>
         </el-form-item>
         <el-form-item label="上传头像" prop="photo">
           <el-upload
@@ -93,7 +93,7 @@
           </el-upload>
         </el-form-item>
         <el-form-item label="手机号" prop="phone">
-          <el-input v-model="temp.phone" placeholder="11数字位手机号" @blur="checkUniq(temp.phone, 'phone')"/>
+          <el-input v-model.number="temp.phone" placeholder="11数字位手机号" @blur="checkUniq(temp.phone, 'phone')"/>
         </el-form-item>
         <el-form-item label="真实姓名" prop="name">
           <el-input v-model="temp.name" placeholder="史前风"/>
@@ -209,9 +209,12 @@ export default {
         create: '新增会员'
       },
       rules: {
-        type: [{ required: true, message: 'type is required', trigger: 'change' }],
-        timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
-        title: [{ required: true, message: 'title is required', trigger: 'blur' }]
+        user_card: [{ required: true, validator: this.checkUserCard, trigger: 'blur' }],
+        phone: [{ required: true, validator: this.checkTel, trigger: 'blur' }],
+        name: [{ required: true, message: '请输入真实姓名', trigger: 'blur' },
+          { min: 2, max: 3, message: '长度在 2 到 3 个字符', trigger: 'blur' }],
+        nick_name: [{ required: true, message: '请输入昵称', trigger: 'blur' },
+          { min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur' }]
       }
     }
   },
@@ -325,6 +328,28 @@ export default {
     },
     checkUniq(data, type) {
       checkParamUniq({ 'type': type, data: data })
+    }, checkTel(rule, value, callback) {
+      if (!value) {
+        callback(new Error('请输入手机号码'))
+      } else {
+        const reg = /^1[3|4|5|7|8][0-9]\d{8}$/
+        if (reg.test(value)) {
+          callback()
+        } else {
+          return callback(new Error('请输入正确的手机号'))
+        }
+      }
+    }, checkUserCard(rule, value, callback) {
+      if (!value) {
+        callback(new Error('请输入会员卡号'))
+      } else {
+        const reg = /^4[0-9]\d{9}$/
+        if (reg.test(value)) {
+          callback()
+        } else {
+          return callback(new Error('请输入正确的会员卡号(以数字4开头的11位有效数字)'))
+        }
+      }
     }
   }
 }
