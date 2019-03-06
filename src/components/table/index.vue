@@ -1,151 +1,227 @@
 <template>
-	<div class="xfn-table-info">
-		<el-card shadow="hover">
-			<div class="xfn-table" :style="{background:getTableColor(data.status)}">{{data.tid}}号桌：{{data.status|tableStatus}}</div>
-			<el-button type="success" plain size="mini" @click="showSuiteDetail">详情</el-button>
-			<el-button type="danger" plain size="mini" @click="editSuiteDetail">修改</el-button>
-		</el-card>
+  <div class="xfn-table-info">
+    <el-card shadow="hover">
+      <div :style="{background:getTableColor(data.status)}" class="xfn-table">{{ data.tid }}号套间：{{ data.status|tableStatus }}</div>
+      <el-button type="success" plain size="mini" @click="showSuiteDetail">详情</el-button>
+      <el-button type="danger" plain size="mini" @click="editSuiteDetail">修改</el-button>
+    </el-card>
 
-		<!--桌台详情对话框-->
-		<el-dialog :title="data.tid+'号桌台详情'" :visible="dialogTableDetailVisible" :before-close="closeDialogTableDetail">
-			<!--对话框主体-->
-			<el-tabs type="border-card" @tab-click="">
-				<el-tab-pane label="套间状态">
-					状态加载中...
+    <!--套间详情对话框-->
+    <el-dialog :title="data.tid+'号套间详情'" :visible="dialogTableDetailVisible" :before-close="closeDialogTableDetail">
+      <!--对话框主体-->
+      <el-tabs v-model="activeName" type="border-card">
+        <el-tab-pane label="套间状态" name="first" style="text-align: left">
+          <!--套间空闲状态-->
+          <el-form v-show="formVisible1" :model="formLabelAlign" label-width="80px">
+            <el-form-item label="套间状态:">
+              <el-button type="info" plain>空闲</el-button>
+            </el-form-item>
+          </el-form>
+          <!--套间预约状态-->
+          <el-form v-show="formVisible2" :model="formLabelAlign" label-width="80px">
+            <el-form-item label="套间状态:">
+              <el-button type="info" plain>预定</el-button>
+            </el-form-item>
+            <el-form-item label="预约人:">
+              <el-button type="info" plain>叮当</el-button>
+            </el-form-item>
+            <el-form-item label="联系电话:">
+              <el-input v-model="formLabelAlign.type" placeholder="13207630752" style="width: 45%;"/>
+            </el-form-item>
+            <el-form-item label="预约时间">
+              <el-col :span="11">
+                <el-input placeholder="2019-01-22 10:21:00" style="width: 100%;"/>
+              </el-col>
+            </el-form-item>
+            <el-form-item label="消费时间">
+              <el-col :span="11">
+                <el-input placeholder="2019-01-22 17:30:00" style="width: 100%;"/>
+              </el-col>
+            </el-form-item>
+          </el-form>
+          <!--套间占用状态-->
+          <el-form v-show="formVisible3" :model="formLabelAlign" label-width="80px" >
+            <el-form-item label="套间状态:">
+              <el-button type="info" plain>占用</el-button>
+            </el-form-item>
+            <el-form-item label="套间名称:">
+              <el-button type="info" plain>水玲珑</el-button>
+            </el-form-item>
+            <el-form-item label="下单人:">
+              <el-button type="warning" plain>丁丁</el-button>
+            </el-form-item>
+            <el-form-item label="占用时间">
+              <el-col :span="11">
+                <el-input placeholder="开始时间" style="width: 100%;"/>
+              </el-col>
+              <el-col :span="2" class="line">--</el-col>
+              <el-col :span="11">
+                <el-input placeholder="结束时间" style="width: 100%;"/>
+              </el-col>
+            </el-form-item>
+          </el-form>
+          <!--套间其他状态-->
+          <el-form v-show="formVisible4" :model="formLabelAlign" label-width="80px">
+            <el-form-item label="套间状态:">
+              <el-button type="info" plain>其他</el-button>
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
+      </el-tabs>
+      <!--对话框尾部-->
+      <div slot="footer">
+        <el-button type="primary" @click="dialogTableDetailVisible=false" >确定</el-button>
+      </div>
+    </el-dialog>
 
-				</el-tab-pane>
+    <!--套间修改对话框-->
+    <el-dialog :visible.sync="dialogFormVisible" title="修改商品分类">
 
-			</el-tabs>
-			<!--对话框尾部-->
-			<div slot="footer">
-				<el-button type="primary" @click="dialogTableDetailVisible=false">确定</el-button>
-			</div>
-		</el-dialog>
+      <el-form :model="formLabelAlign" label-width="80px">
+        <el-form-item label="套件状态">
+          <el-radio-group v-model="radio1" style="margin-bottom: 30px;">
+            <el-radio :label="1" border @change="changetype()">空闲</el-radio>
+            <el-radio :label="2" border @change="changetype()">预约</el-radio>
+            <el-radio :label="3" border @change="changetype()">占用</el-radio>
+            <el-radio :label="4" border @change="changetype()">其他</el-radio>
+          </el-radio-group>
+        </el-form-item>
+      </el-form>
+      <!--空闲状态-->
+      <el-form v-show="formVisible1" :model="formLabelAlign" label-width="80px"/>
 
-		<!--桌台修改对话框-->
-		<el-dialog title="修改商品分类" :visible.sync="dialogFormVisible">
+      <!--预约状态-->
+      <el-form v-show="formVisible2" :model="formLabelAlign" label-width="80px">
+        <el-form-item label="预约时间">
+          <el-col :span="11">
+            <el-date-picker v-model="formLabelAlign.date1" type="date" placeholder="选择日期" style="width: 100%;"/>
+          </el-col>
+          <el-col :span="2" class="line">-</el-col>
+          <el-col :span="11">
+            <el-time-picker v-model="formLabelAlign.date2" placeholder="选择时间" style="width: 100%;"/>
+          </el-col>
+        </el-form-item>
+        <el-form-item label="预约人">
+          <el-input v-model="formLabelAlign.region"/>
+        </el-form-item>
+        <el-form-item label="联系电话">
+          <el-input v-model="formLabelAlign.type"/>
+        </el-form-item>
+      </el-form>
+      <!--占用状态-->
+      <el-form v-show="formVisible3" :model="formLabelAlign" label-width="80px">
+        <el-form-item label="使用人数">
+          <el-input v-model="formLabelAlign.number"/>
+        </el-form-item>
+        <el-form-item label="占用时间">
+          <el-col :span="11">
+            <el-time-picker v-model="formLabelAlign.date1" placeholder="开始时间" style="width: 100%;"/>
+          </el-col>
+          <el-col :span="2" class="line">-</el-col>
+          <el-col :span="11">
+            <el-time-picker v-model="formLabelAlign.date2" placeholder="结束时间" style="width: 100%;"/>
+          </el-col>
+        </el-form-item>
+      </el-form>
+      <!--其他状态-->
+      <el-form v-show="formVisible4" :model="formLabelAlign" label-width="80px">
+        <el-form-item label="备注">
+          <el-input v-model="formLabelAlign.textarea" type="textarea"/>
+        </el-form-item>
+      </el-form>
 
-			<el-form label-width="80px" :model="formLabelAlign">
-				<el-form-item label="套件状态">
-					<el-radio-group v-model="radio1" style="margin-bottom: 30px;">
-						<el-radio border @change="changetype()" :label="1">空闲</el-radio>
-						<el-radio border @change="changetype()" :label="2">预约</el-radio>
-						<el-radio border @change="changetype()" :label="3">占用</el-radio>
-						<el-radio border @change="changetype()" :label="4">其他</el-radio>
-					</el-radio-group>
-				</el-form-item>
-			</el-form>
-			<!--空闲状态-->
-			<el-form v-show="formVisible1" label-width="80px" :model="formLabelAlign"></el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+      </div>
+    </el-dialog>
 
-			<!--预约状态-->
-			<el-form v-show="formVisible2" label-width="80px" :model="formLabelAlign">
-				<el-form-item label="预约时间">
-					<el-input v-model="formLabelAlign.name"></el-input>
-				</el-form-item>
-				<el-form-item label="预约人">
-					<el-input v-model="formLabelAlign.region"></el-input>
-				</el-form-item>
-				<el-form-item label="联系电话">
-					<el-input v-model="formLabelAlign.type"></el-input>
-				</el-form-item>
-			</el-form>
-			<!--占用状态-->
-			<el-form v-show="formVisible3" label-width="80px" :model="formLabelAlign">
-				<el-form-item label="使用人数">
-					<el-input v-model="formLabelAlign.number"></el-input>
-				</el-form-item>
-				<el-form-item label="使用时间">
-					<el-input v-model="formLabelAlign.time"></el-input>
-				</el-form-item>
-			</el-form>
-			<!--其他状态-->
-			<el-form v-show="formVisible4" label-width="80px" :model="formLabelAlign">
-				<el-form-item label="备注">
-					<el-input  type="textarea" v-model="formLabelAlign.textarea"></el-input>
-				</el-form-item>
-				
-			</el-form>
-
-			<div slot="footer" class="dialog-footer">
-				<el-button @click="dialogFormVisible = false">取 消</el-button>
-				<el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
-			</div>
-		</el-dialog>
-
-	</div>
+  </div>
 </template>
 
 <script>
-	export default {
-		data() {
-			return {
-				label: '',
-				radio1: 1,
-				formVisible1:false,
-				formVisible2: false,
-				formVisible3: false,
-				formVisible4: false,
-				formLabelAlign: {
-					name: '',
-					region: '',
-					type: '',
-					numbe:'',
-					time:'',
-					textarea:''
-				},
-				resource: "",
-				dialogFormVisible: false,
-				dialogTableDetailVisible: false,
+export default {
+  props: ['data'],
+  data() {
+    return {
+      activeName: 'first',
+      label: '',
+      radio1: 1,
+      formVisible1: false,
+      formVisible2: false,
+      formVisible3: false,
+      formVisible4: false,
+      // suiteStatus: false,
+      formLabelAlign: {
+        name: '',
+        region: '',
+        type: '',
+        numbe: '',
+        time: '',
+        textarea: '',
+        date1: '',
+        date2: ''
+      },
+      resource: '',
+      dialogFormVisible: false,
+      dialogTableDetailVisible: false
 
-			}
-		},
-		props: ['data'],
-		methods: {
-			getTableColor(status) {
-				if(status == 1) return '#67C23A';
-				else if(status == 2) return '#E6A23C';
-				else if(status == 3) return '#F56C6C';
-				else return '#909399';
-			},
-			showSuiteDetail() {
-				//console.log(this.data); 当前桌子的数据
-				this.dialogTableDetailVisible = true;
-			},
-			editSuiteDetail() {
-				this.dialogFormVisible = true;
-			},
-			closeDialogTableDetail() {
-				this.dialogTableDetailVisible = false;
-			},
-			changetype() {
-		
-				if(this.radio1 === 1) {
-					this.formVisible1 = true;
-					this.formVisible2 = false;
-					this.formVisible3=false;
-					this.formVisible4=false;
-				} else if(this.radio1 === 2) {
-					this.formVisible2 = true;
-					this.formVisible1 = false;
-					this.formVisible3=false;
-					this.formVisible4=false;
-					console.log('2222')
-				}else if(this.radio1 === 3) {
-					this.formVisible3 = true;
-					this.formVisible2 = false;
-					this.formVisible1=false;
-					this.formVisible4=false;
-				}else{
-					this.formVisible4 = true;
-					this.formVisible2 = false;
-					this.formVisible3=false;
-					this.formVisible1=false;
-				}
-				
-			}
-		}
-	}
+    }
+  },
+  methods: {
+
+    getTableColor(status) {
+      if (status == 1) return '#67C23A'
+      else if (status == 2) return '#E6A23C'
+      else if (status == 3) return '#F56C6C'
+      else return '#909399'
+    },
+    showSuiteDetail() {
+      // console.log(this.data.status); //当前套间号
+      var num = this.data.status
+      this.dialogTableDetailVisible = true
+      if (num == 1) {
+        return this.formVisible1 = true
+      } else if (num == 2) {
+        return this.formVisible2 = true
+      } else if (num == 3) {
+        return this.formVisible3 = true
+      }else {
+        return this.formVisible4=true
+      }
+    },
+    editSuiteDetail() {
+      this.dialogFormVisible = true
+    },
+    closeDialogTableDetail() {
+      this.dialogTableDetailVisible = false
+    },
+    changetype() {
+      if (this.radio1 === 1) {
+        this.formVisible1 = true
+        this.formVisible2 = false
+        this.formVisible3 = false
+        this.formVisible4 = false
+      } else if (this.radio1 === 2) {
+        this.formVisible2 = true
+        this.formVisible1 = false
+        this.formVisible3 = false
+        this.formVisible4 = false
+        console.log('2222')
+      } else if (this.radio1 === 3) {
+        this.formVisible3 = true
+        this.formVisible2 = false
+        this.formVisible1 = false
+        this.formVisible4 = false
+      } else {
+        this.formVisible4 = true
+        this.formVisible2 = false
+        this.formVisible3 = false
+        this.formVisible1 = false
+      }
+    }
+  }
+}
 </script>
 
 <style scoped>
@@ -153,7 +229,7 @@
 		padding: 30px 10px 10px 20px;
 		text-align: center;
 	}
-	
+
 	.xfn-table {
 		width: 100%;
 		height: 120px;
@@ -163,4 +239,5 @@
 		box-shadow: 3px -4px 5px #666;
 		margin: 5px auto;
 	}
+
 </style>

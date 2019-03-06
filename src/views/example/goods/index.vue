@@ -8,10 +8,18 @@
 
         <!--内容-->
         <el-row>
-          <el-clo v-for="(g,j) in c.gList" :xs="12" :md="6" :lg="4" :xl="3">
-            {{ g }}
-            <img>
-          </el-clo>
+          <el-col :span="6" v-for="(o, index) in c.gList"  :key="o" :offset="1">
+            <!--{{ g }}-->
+            <el-card :body-style="{ padding: '10px' }">
+              <img src="@/assets/images/tu.jpg" class="image">
+              <div style="padding: 14px;">
+                <span>美丽的森林</span>
+                <div class="bottom clearfix">
+                  <time class="time">商品描述</time>
+                </div>
+              </div>
+            </el-card>
+          </el-col>
         </el-row>
       </el-tab-pane>
 
@@ -19,11 +27,11 @@
   </div>
 </template>
 
-
 <script>
 export default {
   data(){
     return{
+
       goodsList:[
         {cid:1,cname:"水疗",gList:[1,2,3,4,5,6]},
         {cid:2,cname:"加疗",gList:[1,2,3,4,5,6,7,5]},
@@ -56,4 +64,28 @@ sup{
     line-height: 10px;
 
 }
+.time {
+  font-size: 13px;
+  color: #999;
+}
+
+.bottom {
+  margin-top: 13px;
+  line-height: 12px;
+}
+.image {
+  width: 100%;
+  display: block;
+}
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+}
+
+.clearfix:after {
+  clear: both
+}
+
+
 </style>
