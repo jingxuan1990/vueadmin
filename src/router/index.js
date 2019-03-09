@@ -35,17 +35,17 @@ export const constantRouterMap = [
     children: [{
       path: 'dashboard',
       component: () => import('@/views/dashboard/index'),
-      meta: { title: 'Dashboard', icon: 'example' }
+      meta: { title: '首页', icon: 'example' }
     }]
   },
   {
-    path: '/admin',
+    path: '/users',
     component: Layout,
-    name: 'AdminUser',
+    name: 'Users',
     children: [
       {
-        path: 'user',
-        name: '管理员',
+        path: 'info',
+        name: '会员管理',
         component: () => import('@/views/user/index'),
         meta: { title: '会员管理', icon: 'user' }
       }
@@ -138,28 +138,26 @@ export const constantRouterMap = [
     ]
   },
   {
-    path: '/safety',
+    path: '/admin',
     component: Layout,
+    name: 'AdminUser',
+    redirect: '/admin/user',
+    meta: { title: '管理员管理', icon: 'tree' },
     children: [
       {
-        path: 'index',
-        name: 'safety',
-        component: () => import('@/views/safety/index'),
-        meta: { title: '安全设置', icon: 'nested' }
+        path: 'user',
+        name: '用户管理',
+        component: () => import('@/views/admin_user/index'),
+        meta: { title: '用户管理', icon: 'user' }
+      },
+      {
+        path: 'role',
+        name: '角色管理',
+        component: () => import('@/views/admin_role/index'),
+        meta: { title: '角色管理', icon: 'user' }
       }
     ]
   },
-  // {
-  //   path: 'external-link',
-  //   component: Layout,
-  //   children: [
-  //     {
-  //       path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-  //       meta: { title: 'External Link', icon: 'link' }
-  //     }
-  //   ]
-  // },
-
   { path: '*', redirect: '/404', hidden: true }
 ]
 
