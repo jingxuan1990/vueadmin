@@ -1,24 +1,29 @@
 <template>
   <div>
     <el-tabs type="border-card">
+      <!--导航-->
       <el-tab-pane v-for="(c, i) in goodsList">
         <span slot="label">
           <el-badge :value="c.gList.length">{{ c.cname }}</el-badge>
         </span>
 
-        <!--内容-->
+        <!--卡片内容-->
         <el-row>
-          <el-col :span="6" v-for="(o, index) in c.gList"  :key="o" :offset="1">
+          <el-col v-for="(item, index) in c.gList" :span="6" :key="item" :offset="1" >
             <!--{{ g }}-->
-            <el-card :body-style="{ padding: '10px' }">
-              <img src="@/assets/images/tu.jpg" class="image">
-              <div style="padding: 14px;">
-                <span>美丽的森林</span>
-                <div class="bottom clearfix">
-                  <time class="time">商品描述</time>
-                </div>
-              </div>
+            <el-card :body-style="{ padding: '10px' }" >
+              <img src="@/assets/images/tu.jpg" class="image" @mouseover="addClass" @mouseout="removeClass">
             </el-card>
+            <div class="detail" >
+              <span class="title">美丽的森林</span>
+              <div v-show="classenable">
+                <div class="bottom clearfix">
+                  <time class="time">商品描述商品描述商品描述</time>
+                </div>
+                <div class="price">价格：￥25.00</div>
+              </div>
+            </div>
+
           </el-col>
         </el-row>
       </el-tab-pane>
@@ -29,14 +34,28 @@
 
 <script>
 export default {
-  data(){
-    return{
-
-      goodsList:[
-        {cid:1,cname:"水疗",gList:[1,2,3,4,5,6]},
-        {cid:2,cname:"加疗",gList:[1,2,3,4,5,6,7,5]},
-        {cid:3,cname:"剪辑",gList:[1,2,3,4,5,6]},
+  data() {
+    return {
+      classenable: false,
+      detail: false,
+      goodsList: [
+        { cid: 1, cname: '水疗', gList: [1, 2, 3, 4, 5, 6] },
+        { cid: 2, cname: '加疗', gList: [1, 2, 3, 4, 5, 6, 7, 5] },
+        { cid: 3, cname: '剪辑', gList: [1, 2, 3, 4, 5, 6] },
+        { cid: 4, cname: '食疗', gList: [1, 2, 3, 4, 5] }
       ]
+    }
+  },
+  methods: {
+    addClass(){
+      console.log(11)
+      this.classenable = true
+      // this.current=index
+    },
+    removeClass() {
+      console.log(22)
+      this.classenable = false
+      // this.current=index
     }
   }
 }
@@ -66,12 +85,13 @@ sup{
 }
 .time {
   font-size: 13px;
-  color: #999;
+  color: #fff;
 }
 
 .bottom {
   margin-top: 13px;
   line-height: 12px;
+
 }
 .image {
   width: 100%;
@@ -86,6 +106,27 @@ sup{
 .clearfix:after {
   clear: both
 }
+.detail{
+  position: relative;
+  top: -135px;
+  left: 15px;
 
-
+}
+.title{
+  font-size: 16px;
+  color: #fff;
+  font-family:"Helvetica Neue";
+  font-weight: bold;
+}
+.titleclassred{
+  color: orangered;
+}
+.price{
+  position: relative;
+  left: 100px;
+  top:50px;
+  color: orangered;
+  font-size: small;
+  font-weight: bold;
+}
 </style>

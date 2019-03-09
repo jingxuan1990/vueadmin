@@ -186,12 +186,28 @@ export default {
         return this.formVisible2 = true
       } else if (num == 3) {
         return this.formVisible3 = true
-      }else {
-        return this.formVisible4=true
+      } else {
+        return this.formVisible4 = true
       }
     },
     editSuiteDetail() {
+      var num = this.data.status
       this.dialogFormVisible = true
+      if (num == 1) {
+        this.radio1 = 1
+        this.formVisible1 = true
+      } else {
+        if (num == 2) {
+          this.radio1 = 2
+          this.formVisible2 = true
+        } else if (num == 3) {
+          this.radio1 = 3
+          this.formVisible3 = true
+        } else {
+          this.radio1 = 4
+          this.formVisible4 = true
+        }
+      }
     },
     closeDialogTableDetail() {
       this.dialogTableDetailVisible = false
