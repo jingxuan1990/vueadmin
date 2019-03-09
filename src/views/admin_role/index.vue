@@ -11,22 +11,27 @@
       fit
       highlight-current-row
       style="width: 100%;">
-      <el-table-column label="角色名" prop="id" align="center" width="80px">
+      <el-table-column label="编号" prop="id" align="center" width="80px">
+        <template slot-scope="scope">
+          <span>{{ scope.row.id }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="角色名" prop="role_name" align="center" width="100px">
         <template slot-scope="scope">
           <span>{{ scope.row.role_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="数据权限" width="80px" align="center">
+      <el-table-column label="数据权限" width="344px" align="left" prop="permission_url">
         <template slot-scope="scope">
           <span>{{ scope.row.permission_url }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="修改时间" width="180px">
+      <el-table-column label="修改时间" width="180px" prop="gmt_modified">
         <template slot-scope="scope">
           <span>{{ scope.row.gmt_modified }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" width="180px">
+      <el-table-column label="创建时间" width="180px" prop="gmt_create">
         <template slot-scope="scope">
           <span>{{ scope.row.gmt_create }}</span>
         </template>
@@ -46,17 +51,15 @@
         </el-form-item>
         <el-form-item
           v-for="(permission_url, index) in temp.permission_urls"
-          :label="'权限URL' + (index+1)"
-          :key="permission_url.key"
-          :prop="'temp.permission_urls.' + index + '.value'"
-          :rules="{
-            required: true, message: '权限URL不能为空', trigger: 'blur'
-          }"
+          :label="'数据权限-' + (index+1)"
+          :prop="'permission_urls[' + index + '].value'"
         >
-          <el-input v-model="permission_url.value"/><el-button @click.prevent="removePermissionUrl(permission_url)">删除</el-button>
+          <el-input v-model="permission_url.key" placeholder="页面名称"/>
+          <el-input v-model="permission_url.value" placeholder="页面链接"/>
+          <el-button type="danger" round @click.prevent="removePermissionUrl(permission_url)">删除</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button @click="addPermissionUrl">新增权限URL</el-button>
+          <el-button @click="addPermissionUrl">新增数据权限</el-button>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -75,10 +78,13 @@
   .filter-item{
     margin-right: 10px;
   }
+  .el-table .cell {
+    white-space: pre-line;
+  }
 </style>
 
 <script>
-import { getUserList, createUser, updateUser, deleteUser } from '@/api/user'
+import { createRole, getAllRoles, deleteRole, getRoleById, updateRole } from '@/api/roles'
 import waves from '@/directive/waves' // Waves directive
 
 export default {
@@ -114,9 +120,18 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      getUserList(this.listQuery).then(data => {
+      getAllRoles().then(data => {
+        const result = data.data
+        for (const r of result) {
+          let permissionStr = '';
+          const urls = r['permission_url']
+          for (var url of JSON.parse(urls)) {
+            permissionStr += (url['key'] + ':' + url['value']) + '\n'
+          }
+          r['permission_url'] = permissionStr
+        }
+
         this.list = data.data
-        this.total = data.total
         setTimeout(() => {
           this.listLoading = false
         }, 1000)
@@ -127,6 +142,7 @@ export default {
         role_name: '',
         permission_urls: [
           {
+            key: '',
             value: ''
           }
         ]
@@ -143,11 +159,11 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          createUser(this.temp).then(() => {
+          createRole(this.temp).then(() => {
             this.dialogFormVisible = false
             this.$notify({
               title: '成功',
-              message: '创建会员成功!',
+              message: '创建角色成功!',
               type: 'success',
               duration: 2000
             })
@@ -158,9 +174,16 @@ export default {
       })
     },
     handleUpdate(row) {
-      this.temp = Object.assign({}, row)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
+
+      getRoleById(row.id).then(data => {
+        const result = data.data[0]
+        this.temp['id'] = result['id']
+        this.temp['role_name'] = result['role_name']
+        this.temp['permission_urls'] = JSON.parse(result['permission_url'])
+      })
+
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
@@ -169,14 +192,8 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
-          updateUser(tempData).then(() => {
-            for (const v of this.list) {
-              if (v.id === this.temp.id) {
-                const index = this.list.indexOf(v)
-                this.list.splice(index, 1, this.temp)
-                break
-              }
-            }
+          updateRole(tempData).then(() => {
+            this.getList()
             this.dialogFormVisible = false
             this.$notify({
               title: '成功',
@@ -189,7 +206,7 @@ export default {
       })
     },
     handleDelete(row) {
-      deleteUser(row.id).then(() => {
+      deleteRole(row.id).then(() => {
         this.$notify({
           title: '成功',
           message: '删除成功',
@@ -202,9 +219,10 @@ export default {
       })
     },
     addPermissionUrl() {
+      console.log('array=' + this.temp.permission_urls)
       this.temp.permission_urls.push({
         value: '',
-        key: '权限URL'
+        key: ''
       })
     },
     removePermissionUrl(item) {
