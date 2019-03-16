@@ -11,19 +11,19 @@
       fit
       highlight-current-row
       style="width: 100%;">
-      <el-table-column label="用户名" prop="id" align="center" width="80px">
+      <el-table-column label="用户名" align="center" width="102px">
         <template slot-scope="scope">
-          <span>{{ scope.row.id }}</span>
+          <span>{{ scope.row.username }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="昵称" width="80px" align="center">
+      <el-table-column label="昵称" width="102px" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.nick_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="头像" width="130px" align="center">
+      <el-table-column label="拥有的角色" width="180px" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.phone }}</span>
+          <span>{{ scope.row.password }}</span>
         </template>
       </el-table-column>
       <el-table-column label="修改时间" width="180px">
@@ -51,7 +51,7 @@
         </el-form-item>
         <el-form-item label="头像" prop="photo">
           <el-upload class="avatar-uploader" action="">
-            <img v-if="imageUrl" :src="imageUrl" class="avatar">
+            <img v-if="temp.photo" :src="temp.photo" class="avatar">
             <i v-else class="el-icon-plus avatar-uploader-icon"/>
           </el-upload>
         </el-form-item>
@@ -59,13 +59,11 @@
           <el-input v-model.number="temp.password" placeholder="数字+英文组成的至少12个字符"/>
         </el-form-item>
         <el-form-item label="昵称" prop="nick_name">
-          <el-input v-model="temp.nick_name" placeholder="周星星"/>
+          <el-input v-model="temp.nick_name" placeholder="xxx"/>
         </el-form-item>
-        <el-form-item label="角色权限" prop="roles">
-          <el-checkbox-group v-model="roles">
-            <el-checkbox label="复选框 A"/>
-            <el-checkbox label="复选框 B"/>
-            <el-checkbox label="复选框 C"/>
+        <el-form-item label="角色权限">
+          <el-checkbox-group v-model="roleOptions">
+            <el-checkbox v-for="role in roleOptions" :label="role.value" :key="role.key+''" />
           </el-checkbox-group>
         </el-form-item>
       </el-form>
@@ -112,7 +110,7 @@
 </style>
 
 <script>
-import { getUserList, createUser, updateUser, deleteUser, searchUserByName } from '@/api/user'
+import { getAdminRoles, getAdminUserList } from '@/api/adminuser'
 import waves from '@/directive/waves' // Waves directive
 
 export default {
@@ -125,14 +123,16 @@ export default {
       list: null,
       listLoading: true,
       imageUrl: '',
+      dialogStatus: '',
+      roleOptions: [],
       temp: {
         username: '',
         password: '',
+        photo: '',
         nick_name: '',
         roles: []
       },
       dialogFormVisible: false,
-      dialogStatus: '',
       textMap: {
         update: '修改管理员',
         create: '新增管理员'
@@ -142,40 +142,36 @@ export default {
   },
   created() {
     this.getList()
+    this.getAdminRoles()
   },
   methods: {
     getList() {
       this.listLoading = true
-      getUserList(this.listQuery).then(data => {
+      getAdminUserList().then(data => {
         this.list = data.data
-        this.total = data.total
         setTimeout(() => {
           this.listLoading = false
-        }, 1000)
+        }, 500)
       })
     },
-    handleFilter() {
-      this.listQuery.page = 1
-      this.listLoading = true
-      searchUserByName({ page: this.listQuery.page, limit: this.listQuery.limit, name: this.searchName }).then(data => {
-        this.list = data.data
-        this.total = data.total
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1000)
+    getAdminRoles() {
+      getAdminRoles().then(data => {
+        const result = data.data
+        for (const r of result) {
+          this.roleOptions.push({
+            key: r['id'],
+            value: r['role_name']
+          })
+        }
       })
     },
     resetTemp() {
       this.temp = {
-        id: '',
-        phone: '',
-        user_card: '',
-        name: '',
+        username: '',
+        password: '',
+        photo: '',
         nick_name: '',
-        birth: new Date(),
-        address: '',
-        sex: 'F',
-        level: '1'
+        roles: []
       }
     },
     handleCreate() {
@@ -189,17 +185,18 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          createUser(this.temp).then(() => {
-            this.dialogFormVisible = false
-            this.$notify({
-              title: '成功',
-              message: '创建会员成功!',
-              type: 'success',
-              duration: 2000
-            })
-
-            this.$router.go(0)
-          })
+          console.log('roles=' + JSON.stringify(this.temp.roles))
+          // createUser(this.temp).then(() => {
+          //   this.dialogFormVisible = false
+          //   this.$notify({
+          //     title: '成功',
+          //     message: '创建会员成功!',
+          //     type: 'success',
+          //     duration: 2000
+          //   })
+          //
+          //   this.$router.go(0)
+          // })
         }
       })
     },

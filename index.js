@@ -75,7 +75,7 @@ export const constantRouterMap = [
         component: () => import('@/views/suite/deleSuite/index'),
         meta: { title: '删除套间'}
       }
-      
+
     ]
   },
   {

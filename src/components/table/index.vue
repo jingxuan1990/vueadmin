@@ -79,7 +79,7 @@
 
       <el-form :model="formLabelAlign" label-width="80px">
         <el-form-item label="套件状态">
-          <el-radio-group v-model="radio1" style="margin-bottom: 30px;">
+          <el-radio-group v-model="radio1" size="mini" style="margin-bottom: 30px;">
             <el-radio :label="1" border @change="changetype()">空闲</el-radio>
             <el-radio :label="2" border @change="changetype()">预约</el-radio>
             <el-radio :label="3" border @change="changetype()">占用</el-radio>
@@ -144,6 +144,7 @@ export default {
   props: ['data'],
   data() {
     return {
+      list:null,
       activeName: 'first',
       label: '',
       radio1: 1,
@@ -151,7 +152,6 @@ export default {
       formVisible2: false,
       formVisible3: false,
       formVisible4: false,
-      // suiteStatus: false,
       formLabelAlign: {
         name: '',
         region: '',
@@ -168,6 +168,7 @@ export default {
 
     }
   },
+
   methods: {
 
     getTableColor(status) {
@@ -255,5 +256,7 @@ export default {
 		box-shadow: 3px -4px 5px #666;
 		margin: 5px auto;
 	}
-
+  .el-radio{
+    width: 62px;
+  }
 </style>

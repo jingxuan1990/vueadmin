@@ -1,9 +1,9 @@
 <template>
   <div>
-    <!--循环桌台列表-->
+    <!--循环套间列表-->
     <el-row>
       <el-col v-for="(t,i) in tableList" :xs="12" :sm="8" :md="6" :lg="4" :xl="2">
-        <xfn-table :data="t"/>
+        <spa-table :data="t"/>
       </el-col>
     </el-row>
 
@@ -12,6 +12,7 @@
 
 <script>
 import Table from '@/components/table'
+import { getSuiteList } from '@/api/suite'
 export default {
   //   mounted(){
   //     //加载桌台列表
@@ -23,42 +24,30 @@ export default {
   //     })
   //   },
   components: {
-    'xfn-table': Table
+    'spa-table': Table
   },
   data() {
     return {
-
-      tableList: [{
-        tid: 1,
-        tname: 'jin',
-        type: 2,
-        status: 1
-      },
-      {
-        tid: 2,
-        tname: 'yin',
-        type: 2,
-        status: 2
-      },
-      {
-        tid: 3,
-        tname: 'fin',
-        type: 2,
-        status: 3
-      },
-      {
-        tid: 4,
-        tname: 'fon',
-        type: 3,
-        status: 4
-      },
-      {
-        tid: 5,
-        tname: 'fn',
-        type: 1,
-        status: 2
-      }
-      ]
+      tableList: []
+    }
+  },
+  created() {
+    this.getList()
+  },
+  methods: {
+    getList() {
+      getSuiteList().then(result => {
+        const newList = []
+        for (const l of result.data) {
+          newList.push({
+            tid: l.sid,
+            status: l.status,
+            name: l.name,
+            type: l.type
+          })
+        }
+        this.tableList = newList
+      })
     }
   }
 }

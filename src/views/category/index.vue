@@ -5,104 +5,121 @@
     <br>
     <br>
     <el-table :data="categoryList" stripe border>
-      <el-table-column label="编号" prop="cid"/>
-      <el-table-column label="名称" prop="cname"/>
+      <el-table-column label="编号" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.cid }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="商品类别" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.cname }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="{row,$index}">
           <el-button type="success" size="mini" @click="editCategory(row,$index)">修改</el-button>
-          <el-button type="danger" size="mini" @click="deleteCategory(row.cid,$index)">删除</el-button>
+          <el-button type="danger" size="mini" @click="deleteCategory(row.id,$index)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
-    <!--
-       	作者：HBuilder
-       	时间：2019-03-02
-       	描述：修改对话框
-       -->
+    <!--描述：修改对话框-->
     <el-dialog :visible.sync="dialogFormVisible" title="修改商品分类">
       <el-form :model="form">
         <el-form-item :label-width="formLabelWidth" label="商品编号">
-          <el-input v-model="form.cid" autocomplete="off"/>
+          <el-input v-model="form.cid" :disabled="true" autocomplete="off"/>
         </el-form-item>
         <el-form-item :label-width="formLabelWidth" label="商品类别">
           <el-input v-model="form.cname" autocomplete="off"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+        <el-button @click="dialogFormVisible = false">取消</el-button>
+        <el-button type="primary" @click="updateData">确定</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
+import { getCategoryList, updateCategory, deleteCategory, addCategory } from '@/api/category'
 export default {
   data() {
     return {
-      categoryList: [{
-        cid: '1',
-        cname: '美容护理'
-      },
-      {
-        cid: '2',
-        cname: '身体SPA'
-      },
-      {
-        cid: '3',
-        cname: '中医理疗'
-      },
-      {
-        cid: '4',
-        cname: '食疗'
-      }
-      ],
-      // 对话框数据属性
+      categoryList: [],
       dialogFormVisible: false,
-      beform: {},
       form: {
+        id: '',
         cid: '',
         cname: ''
       },
       formLabelWidth: '80px'
     }
   },
+  created() {
+    this.getList()
+  },
   methods: {
+    updateData() {
+      const formData = Object.assign({}, this.form)
+      updateCategory(formData).then(() => {
+        this.dialogFormVisible = false
+        this.$notify({
+          title: '成功',
+          message: '更新成功',
+          type: 'success',
+          duration: 2000
+        })
+        for (const v of this.categoryList) {
+          if (v.id === this.form.id) {
+            const index = this.categoryList.indexOf(v)
+            this.categoryList.splice(index, 1, this.form)
+            break
+          }
+        }
+      })
+    },
+    getList() {
+      getCategoryList().then(result => {
+        this.categoryList = result.data
+      })
+    },
     editCategory(row, index) {
       this.index = index
       this.dialogFormVisible = true
-      for (var key in row) {
+      for (const key in row) {
         this.form[key] = row[key]
       }
     },
-    //			deleteCategory(row, index) {
-    //
-    //			},
     addCategory() {
       this.$prompt('请输入新商品类别名:', '提示', {
         type: 'info'
-      }).then((value) => {
+      }).then((data) => {
         // 获得用户输入，加到数据库
+        this.form['cname'] = data.value
+        addCategory(this.form).then(() => {
+          this.$message({
+            type: 'success',
+            message: '添加成功'
+          })
+          this.$router.go(0)
+        })
       }).catch(() => {
 
       })
     },
-
-			 deleteCategory(cid, index) {
+    deleteCategory(id, index) {
       this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        var url = 'http://127.0.0.1:3000/deleteuser?uid=' + uid
-        console.log(url)
-        this.axios.get(url).then(() => {
+        deleteCategory(id).then(() => {
           this.$message({
             type: 'success',
             message: '删除成功!'
           })
         })
-        this.list2.splice(index, 1)
+        this.categoryList.splice(index, 1)
       }).catch(() => {
         this.$message({
           type: 'info',
