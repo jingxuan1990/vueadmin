@@ -21,9 +21,9 @@
           <span>{{ scope.row.nick_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="拥有的角色" width="180px" align="center">
+      <el-table-column label="拥有的角色" width="180px" align="center" class="line">
         <template slot-scope="scope">
-          <span>{{ scope.row.password }}</span>
+          <span>{{ scope.row.roles }}</span>
         </template>
       </el-table-column>
       <el-table-column label="修改时间" width="180px">
@@ -59,12 +59,16 @@
           <el-input v-model.number="temp.password" placeholder="数字+英文组成的至少12个字符"/>
         </el-form-item>
         <el-form-item label="昵称" prop="nick_name">
-          <el-input v-model="temp.nick_name" placeholder="xxx"/>
+          <el-input v-model="temp.nick_name" placeholder="周星星"/>
         </el-form-item>
         <el-form-item label="角色权限">
-          <el-checkbox-group v-model="roleOptions">
-            <el-checkbox v-for="role in roleOptions" :label="role.value" :key="role.key+''" />
-          </el-checkbox-group>
+          <el-select v-model="temp.roles" multiple placeholder="请选择">
+            <el-option
+              v-for="item in roleOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"/>
+          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -107,10 +111,13 @@
     margin-right: 10px;
   }
 
+  .line{
+    white-space: pre-line;
+  }
 </style>
 
 <script>
-import { getAdminRoles, getAdminUserList } from '@/api/adminuser'
+import { getAdminRoles, getAdminUserList, createAdminUser, deleteAdminUser, updateAdminUser } from '@/api/adminuser'
 import waves from '@/directive/waves' // Waves directive
 
 export default {
@@ -141,17 +148,32 @@ export default {
     }
   },
   created() {
-    this.getList()
     this.getAdminRoles()
+    this.getList()
   },
   methods: {
     getList() {
       this.listLoading = true
       getAdminUserList().then(data => {
-        this.list = data.data
+        for (const result of data['data']) {
+          const roles = JSON.parse(result['role'])
+          let roleNameString = ''
+          for (const role of roles) {
+            for (const option of this.roleOptions) {
+              if (role === option['value']) {
+                roleNameString += option['label'] + ';'
+              }
+            }
+            roleNameString = roleNameString.substring(0, roleNameString.length - 1)
+          }
+          result['roles'] = roleNameString
+        }
+
+        this.list = data['data']
+
         setTimeout(() => {
           this.listLoading = false
-        }, 500)
+        }, 1000)
       })
     },
     getAdminRoles() {
@@ -159,8 +181,8 @@ export default {
         const result = data.data
         for (const r of result) {
           this.roleOptions.push({
-            key: r['id'],
-            value: r['role_name']
+            value: r['id'],
+            label: r['role_name']
           })
         }
       })
@@ -185,23 +207,24 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          console.log('roles=' + JSON.stringify(this.temp.roles))
-          // createUser(this.temp).then(() => {
-          //   this.dialogFormVisible = false
-          //   this.$notify({
-          //     title: '成功',
-          //     message: '创建会员成功!',
-          //     type: 'success',
-          //     duration: 2000
-          //   })
-          //
-          //   this.$router.go(0)
-          // })
+          createAdminUser(this.temp).then(() => {
+            this.dialogFormVisible = false
+            this.$notify({
+              title: '成功',
+              message: '创建管理员成功!',
+              type: 'success',
+              duration: 2000
+            })
+
+            this.$router.go(0)
+          })
         }
       })
     },
     handleUpdate(row) {
       this.temp = Object.assign({}, row)
+      this.temp['roles'] = JSON.parse(this.temp['role'])
+      this.temp['password'] = ''
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -212,10 +235,22 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
-          updateUser(tempData).then(() => {
+          console.log('update =' + JSON.stringify(tempData))
+          updateAdminUser(tempData).then(() => {
             for (const v of this.list) {
               if (v.id === this.temp.id) {
                 const index = this.list.indexOf(v)
+
+                let roleNameString = ''
+                for (const role of this.temp.roles) {
+                  for (const option of this.roleOptions) {
+                    if (role === option['value']) {
+                      roleNameString += option['label'] + ';'
+                    }
+                  }
+                  roleNameString = roleNameString.substring(0, roleNameString.length - 1)
+                }
+                this.temp['roles'] = roleNameString
                 this.list.splice(index, 1, this.temp)
                 break
               }
@@ -232,7 +267,7 @@ export default {
       })
     },
     handleDelete(row) {
-      deleteUser(row.id).then(() => {
+      deleteAdminUser(row.id).then(() => {
         this.$notify({
           title: '成功',
           message: '删除成功',

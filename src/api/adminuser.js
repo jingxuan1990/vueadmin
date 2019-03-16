@@ -13,3 +13,27 @@ export function getAdminUserList() {
     method: 'get'
   })
 }
+
+export function createAdminUser(data) {
+  return request({
+    url: '/admin',
+    method: 'post',
+    data
+  })
+}
+
+export function deleteAdminUser(data) {
+  return request({
+    url: '/admin/' + data,
+    method: 'delete'
+  })
+}
+
+export function updateAdminUser(data) {
+  return request({
+    url: '/admin',
+    method: 'put',
+    data
+  })
+}
+
