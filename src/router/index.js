@@ -68,14 +68,7 @@ export const constantRouterMap = [
         name: 'addSuite',
         component: () => import('@/views/suite/addSuite/index'),
         meta: { title: '添加套间'}
-      },
-      {
-        path: 'deleSuite',
-        name: 'deleSuite',
-        component: () => import('@/views/suite/deleSuite/index'),
-        meta: { title: '删除套间'}
       }
-
     ]
   },
   {

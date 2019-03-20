@@ -75,10 +75,10 @@
     </el-dialog>
 
     <!--套间修改对话框-->
-    <el-dialog :visible.sync="dialogFormVisible" title="修改商品分类">
+    <el-dialog :visible.sync="dialogFormVisible" title="修改套间状态">
 
       <el-form :model="formLabelAlign" label-width="80px">
-        <el-form-item label="套件状态">
+        <el-form-item label="套间状态">
           <el-radio-group v-model="radio1" size="mini" style="margin-bottom: 30px;">
             <el-radio :label="1" border @change="changetype()">空闲</el-radio>
             <el-radio :label="2" border @change="changetype()">预约</el-radio>
@@ -94,45 +94,45 @@
       <el-form v-show="formVisible2" :model="formLabelAlign" label-width="80px">
         <el-form-item label="预约时间">
           <el-col :span="11">
-            <el-date-picker v-model="formLabelAlign.date1" type="date" placeholder="选择日期" style="width: 100%;"/>
+            <el-date-picker v-model="formLabelAlign.booking_start_time" type="date" placeholder="选择日期" style="width: 100%;"/>
           </el-col>
           <el-col :span="2" class="line">-</el-col>
           <el-col :span="11">
-            <el-time-picker v-model="formLabelAlign.date2" placeholder="选择时间" style="width: 100%;"/>
+            <el-time-picker v-model="formLabelAlign.booking_end_time" placeholder="选择时间" style="width: 100%;"/>
           </el-col>
         </el-form-item>
         <el-form-item label="预约人">
-          <el-input v-model="formLabelAlign.region"/>
+          <el-input v-model="formLabelAlign.username"/>
         </el-form-item>
         <el-form-item label="联系电话">
-          <el-input v-model="formLabelAlign.type"/>
+          <el-input v-model="formLabelAlign.phone"/>
         </el-form-item>
       </el-form>
       <!--占用状态-->
       <el-form v-show="formVisible3" :model="formLabelAlign" label-width="80px">
         <el-form-item label="使用人数">
-          <el-input v-model="formLabelAlign.number"/>
+          <el-input v-model="formLabelAlign.use_num"/>
         </el-form-item>
         <el-form-item label="占用时间">
           <el-col :span="11">
-            <el-time-picker v-model="formLabelAlign.date1" placeholder="开始时间" style="width: 100%;"/>
+            <el-time-picker v-model="formLabelAlign.zhan_start_time" placeholder="开始时间" style="width: 100%;"/>
           </el-col>
           <el-col :span="2" class="line">-</el-col>
           <el-col :span="11">
-            <el-time-picker v-model="formLabelAlign.date2" placeholder="结束时间" style="width: 100%;"/>
+            <el-time-picker v-model="formLabelAlign.zhan_end_time" placeholder="结束时间" style="width: 100%;"/>
           </el-col>
         </el-form-item>
       </el-form>
       <!--其他状态-->
       <el-form v-show="formVisible4" :model="formLabelAlign" label-width="80px">
         <el-form-item label="备注">
-          <el-input v-model="formLabelAlign.textarea" type="textarea"/>
+          <el-input v-model="formLabelAlign.remark" type="textarea"/>
         </el-form-item>
       </el-form>
 
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+        <el-button @click="dialogFormVisible = false">取消</el-button>
+        <el-button type="primary" @click="updateData">确定</el-button>
       </div>
     </el-dialog>
 
@@ -140,11 +140,13 @@
 </template>
 
 <script>
+import { editSuite } from '@/api/suite'
+
 export default {
   props: ['data'],
   data() {
     return {
-      list:null,
+      list: null,
       activeName: 'first',
       label: '',
       radio1: 1,
@@ -153,14 +155,16 @@ export default {
       formVisible3: false,
       formVisible4: false,
       formLabelAlign: {
-        name: '',
-        region: '',
-        type: '',
-        numbe: '',
-        time: '',
-        textarea: '',
-        date1: '',
-        date2: ''
+        id: '',
+        username: '',
+        phone: '',
+        use_num: '',
+        remark: '',
+        booking_start_time: '',
+        booking_end_time: '',
+        zhan_start_time: '',
+        zhan_end_time: '',
+        status: 1
       },
       resource: '',
       dialogFormVisible: false,
@@ -172,36 +176,50 @@ export default {
   methods: {
 
     getTableColor(status) {
-      if (status == 1) return '#67C23A'
-      else if (status == 2) return '#E6A23C'
-      else if (status == 3) return '#F56C6C'
+      if (status === 1) return '#67C23A'
+      else if (status === 2) return '#E6A23C'
+      else if (status === 3) return '#F56C6C'
       else return '#909399'
+    },
+    resetData() {
+      this.formLabelAlign = {
+        username: '',
+        phone: '',
+        use_num: '',
+        remark: '',
+        booking_start_time: '',
+        booking_end_time: '',
+        zhan_start_time: '',
+        zhan_end_time: ''
+      }
     },
     showSuiteDetail() {
       // console.log(this.data.status); //当前套间号
-      var num = this.data.status
+      const status = this.data.status
       this.dialogTableDetailVisible = true
-      if (num == 1) {
+      if (status === 1) {
         return this.formVisible1 = true
-      } else if (num == 2) {
+      } else if (status === 2) {
         return this.formVisible2 = true
-      } else if (num == 3) {
+      } else if (status === 3) {
         return this.formVisible3 = true
       } else {
         return this.formVisible4 = true
       }
     },
     editSuiteDetail() {
-      var num = this.data.status
+      const status = this.data.status
+      this.formLabelAlign.status = status
+      this.formLabelAlign.id = this.data.id
       this.dialogFormVisible = true
-      if (num == 1) {
+      if (status === 1) {
         this.radio1 = 1
         this.formVisible1 = true
       } else {
-        if (num == 2) {
+        if (status === 2) {
           this.radio1 = 2
           this.formVisible2 = true
-        } else if (num == 3) {
+        } else if (status === 3) {
           this.radio1 = 3
           this.formVisible3 = true
         } else {
@@ -214,28 +232,43 @@ export default {
       this.dialogTableDetailVisible = false
     },
     changetype() {
+      // 清空临时数据
+      this.resetData()
+
       if (this.radio1 === 1) {
+        this.data.status = 1
+        this.formLabelAlign.status = 1
         this.formVisible1 = true
         this.formVisible2 = false
         this.formVisible3 = false
         this.formVisible4 = false
       } else if (this.radio1 === 2) {
+        this.data.status = 2
+        this.formLabelAlign.status = 2
         this.formVisible2 = true
         this.formVisible1 = false
         this.formVisible3 = false
         this.formVisible4 = false
-        console.log('2222')
       } else if (this.radio1 === 3) {
+        this.data.status = 3
+        this.formLabelAlign.status = 3
         this.formVisible3 = true
         this.formVisible2 = false
         this.formVisible1 = false
         this.formVisible4 = false
       } else {
+        this.data.status = 4
+        this.formLabelAlign.status = 4
         this.formVisible4 = true
         this.formVisible2 = false
         this.formVisible3 = false
         this.formVisible1 = false
       }
+    }, updateData() {
+      this.dialogFormVisible = false
+      editSuite(this.formLabelAlign).then(result => {
+        console.log('table result=' + result)
+      })
     }
   }
 }

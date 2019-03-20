@@ -6,3 +6,19 @@ export function getSuiteList() {
     method: 'get'
   })
 }
+
+export function addSuite(data) {
+  return request({
+    url: '/suite',
+    method: 'post',
+    data
+  })
+}
+
+export function editSuite(data) {
+  return request({
+    url: '/suite',
+    method: 'put',
+    data
+  })
+}
