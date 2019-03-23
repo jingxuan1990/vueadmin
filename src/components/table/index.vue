@@ -23,19 +23,14 @@
               <el-button type="info" plain>预定</el-button>
             </el-form-item>
             <el-form-item label="预约人:">
-              <el-button type="info" plain>叮当</el-button>
+              <el-button type="info" plain>{{ formLabelAlign.username }}</el-button>
             </el-form-item>
             <el-form-item label="联系电话:">
-              <el-input v-model="formLabelAlign.type" placeholder="13207630752" style="width: 45%;"/>
+              <el-input v-model="formLabelAlign.phone" disabled="true" style="width: 45%;"/>
             </el-form-item>
             <el-form-item label="预约时间">
               <el-col :span="11">
-                <el-input placeholder="2019-01-22 10:21:00" style="width: 100%;"/>
-              </el-col>
-            </el-form-item>
-            <el-form-item label="消费时间">
-              <el-col :span="11">
-                <el-input placeholder="2019-01-22 17:30:00" style="width: 100%;"/>
+                <el-input v-model="formLabelAlign.booking_time" disabled="true" style="width: 100%;"/>
               </el-col>
             </el-form-item>
           </el-form>
@@ -45,18 +40,15 @@
               <el-button type="info" plain>占用</el-button>
             </el-form-item>
             <el-form-item label="套间名称:">
-              <el-button type="info" plain>水玲珑</el-button>
-            </el-form-item>
-            <el-form-item label="下单人:">
-              <el-button type="warning" plain>丁丁</el-button>
+              <el-button type="info" plain>{{ formLabelAlign.name }}</el-button>
             </el-form-item>
             <el-form-item label="占用时间">
               <el-col :span="11">
-                <el-input placeholder="开始时间" style="width: 100%;"/>
+                <el-input v-model="formLabelAlign.zhan_start_time" disabled="true" style="width: 100%;"/>
               </el-col>
               <el-col :span="2" class="line">--</el-col>
               <el-col :span="11">
-                <el-input placeholder="结束时间" style="width: 100%;"/>
+                <el-input v-model="formLabelAlign.zhan_start_time" disabled="true" style="width: 100%;"/>
               </el-col>
             </el-form-item>
           </el-form>
@@ -94,11 +86,7 @@
       <el-form v-show="formVisible2" :model="formLabelAlign" label-width="80px">
         <el-form-item label="预约时间">
           <el-col :span="11">
-            <el-date-picker v-model="formLabelAlign.booking_start_time" type="date" placeholder="选择日期" style="width: 100%;"/>
-          </el-col>
-          <el-col :span="2" class="line">-</el-col>
-          <el-col :span="11">
-            <el-time-picker v-model="formLabelAlign.booking_end_time" placeholder="选择时间" style="width: 100%;"/>
+            <el-date-picker v-model="formLabelAlign.booking_time" type="datetime" placeholder="选择日期" style="width: 100%;"/>
           </el-col>
         </el-form-item>
         <el-form-item label="预约人">
@@ -140,7 +128,7 @@
 </template>
 
 <script>
-import { editSuite } from '@/api/suite'
+import { editSuite, getSuiteById } from '@/api/suite'
 
 export default {
   props: ['data'],
@@ -156,12 +144,12 @@ export default {
       formVisible4: false,
       formLabelAlign: {
         id: '',
+        name: '',
         username: '',
         phone: '',
         use_num: '',
         remark: '',
-        booking_start_time: '',
-        booking_end_time: '',
+        booking_time: '',
         zhan_start_time: '',
         zhan_end_time: '',
         status: 1
@@ -187,25 +175,24 @@ export default {
         phone: '',
         use_num: '',
         remark: '',
-        booking_start_time: '',
-        booking_end_time: '',
+        booking_time: '',
         zhan_start_time: '',
         zhan_end_time: ''
       }
     },
     showSuiteDetail() {
-      // console.log(this.data.status); //当前套间号
       const status = this.data.status
       this.dialogTableDetailVisible = true
       if (status === 1) {
-        return this.formVisible1 = true
+        this.formVisible1 = true
       } else if (status === 2) {
-        return this.formVisible2 = true
+        this.formVisible2 = true
       } else if (status === 3) {
-        return this.formVisible3 = true
+        this.formVisible3 = true
       } else {
-        return this.formVisible4 = true
+        this.formVisible4 = true
       }
+      this.fetchSuiteDetail()
     },
     editSuiteDetail() {
       const status = this.data.status
@@ -227,6 +214,25 @@ export default {
           this.formVisible4 = true
         }
       }
+
+      this.fetchSuiteDetail()
+    },
+    fetchSuiteDetail() {
+      getSuiteById(this.data.id).then(result => {
+        const resultObj = result.data[0]
+        this.formLabelAlign = {
+          id: resultObj['id'],
+          username: resultObj['booking_user_name'],
+          phone: resultObj['booking_phone'],
+          use_num: resultObj['use_num'],
+          remark: resultObj['remark'],
+          booking_time: resultObj['booking_time'],
+          zhan_start_time: resultObj['zhan_starttime'],
+          zhan_end_time: resultObj['zhan_endtime'],
+          status: resultObj['status'],
+          name: resultObj['name']
+        }
+      })
     },
     closeDialogTableDetail() {
       this.dialogTableDetailVisible = false
@@ -234,6 +240,7 @@ export default {
     changetype() {
       // 清空临时数据
       this.resetData()
+      this.formLabelAlign['id'] = this.data['id']
 
       if (this.radio1 === 1) {
         this.data.status = 1
@@ -267,7 +274,12 @@ export default {
     }, updateData() {
       this.dialogFormVisible = false
       editSuite(this.formLabelAlign).then(result => {
-        console.log('table result=' + result)
+        this.$notify({
+          title: '成功',
+          message: '修改成功!',
+          type: 'success',
+          duration: 2000
+        })
       })
     }
   }

@@ -22,3 +22,11 @@ export function editSuite(data) {
     data
   })
 }
+
+export function getSuiteById(id) {
+  return request({
+    url: '/suite/' + id,
+    method: 'get'
+  })
+}
+
