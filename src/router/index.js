@@ -72,19 +72,6 @@ export const constantRouterMap = [
     ]
   },
   {
-    path: '/category',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'category',
-        component: () => import('@/views/category/index'),
-        meta: { title: '商品分类', icon: 'table' }
-      }
-    ]
-  },
-
-  {
     path: '/example',
     component: Layout,
     redirect: '/example/table',
@@ -102,6 +89,12 @@ export const constantRouterMap = [
         name: 'addGoods',
         component: () => import('@/views/example/addGoods/index'),
         meta: { title: '添加商品' }
+      },
+      {
+        path: 'category',
+        name: 'category',
+        component: () => import('@/views/category/index'),
+        meta: { title: '商品分类' }
       }
     ]
   },
