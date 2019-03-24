@@ -72,7 +72,7 @@ export const constantRouterMap = [
     ]
   },
   {
-    path: '/example',
+    path: '/goods',
     component: Layout,
     redirect: '/example/table',
     name: 'Example',

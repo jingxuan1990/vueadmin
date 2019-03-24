@@ -2,60 +2,73 @@
   <div>
     <el-tabs type="border-card">
       <!--导航-->
-      <el-tab-pane v-for="(c, i) in goodsList">
+      <el-tab-pane v-for="item in goodsItems">
         <span slot="label">
-          <el-badge :value="c.gList.length">{{ c.cname }}</el-badge>
+          <el-badge :value="item.goodsCount">{{ item.goodsTypeName }}</el-badge>
         </span>
 
         <!--卡片内容-->
         <el-row>
-          <el-col v-for="(item, index) in c.gList" :span="6" :key="item" :offset="1" >
-            <!--{{ g }}-->
+          <el-col v-for="goodItem in item.goods" :span="6" :key="goodItem.id" :offset="1" >
             <el-card :body-style="{ padding: '10px' }" >
-              <img src="@/assets/images/tu.jpg" class="image" @mouseover="addClass" @mouseout="removeClass">
+              <img src="@/assets/images/tu.jpg" class="image" @mouseover.stop="addClass($event)" @mouseout.stop="removeClass($event)">
             </el-card>
-            <div class="detail" >
-              <span class="title">美丽的森林</span>
-              <div v-show="classenable">
+            <div class="detail" @mouseover.stop="addClass($event)" @mouseout.stop="removeClass($event)">
+              <span class="title">{{ goodItem.title }}</span>
+              <div v-show="classEnable">
                 <div class="bottom clearfix">
-                  <time class="time">商品描述商品描述商品描述</time>
+                  <time class="time">{{ goodItem.descr }}</time>
                 </div>
-                <div class="price">价格：￥25.00</div>
+                <div class="price">价格：￥{{ goodItem.price }}</div>
               </div>
             </div>
-
           </el-col>
         </el-row>
       </el-tab-pane>
-
     </el-tabs>
   </div>
 </template>
 
 <script>
+
+import { getAllGoods } from '@/api/goods'
+
 export default {
   data() {
     return {
-      classenable: false,
+      classEnable: false,
       detail: false,
-      goodsList: [
-        { cid: 1, cname: '水疗', gList: [1, 2, 3, 4, 5, 6] },
-        { cid: 2, cname: '加疗', gList: [1, 2, 3, 4, 5, 6, 7, 5] },
-        { cid: 3, cname: '剪辑', gList: [1, 2, 3, 4, 5, 6] },
-        { cid: 4, cname: '食疗', gList: [1, 2, 3, 4, 5] }
+      goodsItems: [
+        {
+          goodsTypeName: '111',
+          goodsTypeId: 10,
+          goodsCount: 10,
+          goods: [
+            { id: 1, title: '水疗标题1', descr: '这里是描述', price: 20 },
+            { id: 2, title: '水疗标题2', descr: '这里是描述2', price: 21 }
+          ]
+        }
       ]
     }
   },
+  created() {
+    this.getList()
+  },
   methods: {
-    addClass(){
+    addClass(event) {
       console.log(11)
-      this.classenable = true
-      // this.current=index
+      console.log(event)
+      this.classEnable = true
     },
-    removeClass() {
+    removeClass(event) {
       console.log(22)
-      this.classenable = false
-      // this.current=index
+      console.log(event)
+      this.classEnable = false
+    },
+    getList() {
+      getAllGoods().then(result => {
+        this.goodsItems = result.data
+      })
     }
   }
 }
@@ -72,7 +85,6 @@ export default {
 .item {
   margin-top: 10px;
   margin-right: 100px;
-
 }
 sup{
   top: 8px;
@@ -83,6 +95,7 @@ sup{
     line-height: 10px;
 
 }
+
 .time {
   font-size: 13px;
   color: #fff;
@@ -97,6 +110,7 @@ sup{
   width: 100%;
   display: block;
 }
+
 .clearfix:before,
 .clearfix:after {
   display: table;

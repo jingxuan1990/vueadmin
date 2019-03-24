@@ -7,3 +7,10 @@ export function addGoods(data) {
     data
   })
 }
+
+export function getAllGoods() {
+  return request({
+    url: '/goods',
+    method: 'get'
+  })
+}
