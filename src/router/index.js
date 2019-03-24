@@ -67,7 +67,7 @@ export const constantRouterMap = [
         path: 'addSuite',
         name: 'addSuite',
         component: () => import('@/views/suite/addSuite/index'),
-        meta: { title: '添加套间'}
+        meta: { title: '添加套间' }
       }
     ]
   },
@@ -95,25 +95,13 @@ export const constantRouterMap = [
         path: 'goods',
         name: 'Goods',
         component: () => import('@/views/example/goods/index'),
-        meta: { title: '所有商品'}
+        meta: { title: '所有商品' }
       },
       {
         path: 'addGoods',
         name: 'addGoods',
         component: () => import('@/views/example/addGoods/index'),
-        meta: { title: '添加商品'}
-      },
-      {
-        path: 'editGoods',
-        name: 'editGoods',
-        component: () => import('@/views/example/editGoods/index'),
-        meta: { title: '编辑商品'}
-      },
-      {
-        path: 'deleGoods',
-        name: 'deleGoods',
-        component: () => import('@/views/example/deleGoods/index'),
-        meta: { title: '删除商品'}
+        meta: { title: '添加商品' }
       }
     ]
   },
