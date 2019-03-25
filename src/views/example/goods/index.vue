@@ -104,7 +104,6 @@ sup{
 .bottom {
   margin-top: 13px;
   line-height: 12px;
-
 }
 .image {
   width: 100%;
@@ -124,7 +123,6 @@ sup{
   position: relative;
   top: -135px;
   left: 15px;
-
 }
 .title{
   font-size: 16px;

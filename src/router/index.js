@@ -117,6 +117,20 @@ export const constantRouterMap = [
         name: 'order_setting',
         component: () => import('@/views/order/setting/index'),
         meta: { title: '订单设置' }
+      },
+      {
+        path: 'detail',
+        name: 'orderDetail',
+        hidden: true,
+        component: () => import('@/views/order/detail/index'),
+        meta: { title: '订单详情' }
+      },
+      {
+        path: 'deliver',
+        name: 'orderDeliver',
+        hidden: true,
+        component: () => import('@/views/order/deliver/index'),
+        meta: { title: '订单发货' }
       }
     ]
   },
