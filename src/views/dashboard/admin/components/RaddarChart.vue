@@ -72,18 +72,16 @@ export default {
             }
           },
           indicator: [
-            { name: 'Sales', max: 10000 },
-            { name: 'Administration', max: 20000 },
-            { name: 'Information Techology', max: 20000 },
-            { name: 'Customer Support', max: 20000 },
-            { name: 'Development', max: 20000 },
-            { name: 'Marketing', max: 20000 }
+            { name: '注册时间', max: 10000 },
+            { name: '购买金额', max: 19000 },
+            { name: '登录次数', max: 17000 },
+            { name: '用户行为', max: 21000 }
           ]
         },
         legend: {
           left: 'center',
           bottom: '10',
-          data: ['Allocated Budget', 'Expected Spending', 'Actual Spending']
+          data: ['普通会员', '青铜会员', '黄金会员', '铂金会员']
         },
         series: [{
           type: 'radar',
@@ -100,15 +98,19 @@ export default {
           data: [
             {
               value: [5000, 7000, 12000, 11000, 15000, 14000],
-              name: 'Allocated Budget'
+              name: '普通会员'
             },
             {
               value: [4000, 9000, 15000, 15000, 13000, 11000],
-              name: 'Expected Spending'
+              name: '青铜会员'
             },
             {
               value: [5500, 11000, 12000, 15000, 12000, 12000],
-              name: 'Actual Spending'
+              name: '黄金会员'
+            },
+            {
+              value: [6500, 12000, 13000, 16000, 17000, 19000],
+              name: '铂金会员'
             }
           ],
           animationDuration: animationDuration

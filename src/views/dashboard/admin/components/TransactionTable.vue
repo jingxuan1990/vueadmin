@@ -63,21 +63,6 @@ export default {
       fetchListTop10().then(response => {
         this.list = response.data
       })
-    },
-    formatStatus(value) {
-      if (value === 1) {
-        return '待发货'
-      } else if (value === 2) {
-        return '已发货'
-      } else if (value === 3) {
-        return '已完成'
-      } else if (value === 4) {
-        return '已关闭'
-      } else if (value === 5) {
-        return '无效订单'
-      } else {
-        return '待付款'
-      }
     }
   }
 }

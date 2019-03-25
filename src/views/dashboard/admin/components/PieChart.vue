@@ -56,22 +56,22 @@ export default {
         legend: {
           left: 'center',
           bottom: '10',
-          data: ['Industries', 'Technology', 'Forex', 'Gold', 'Forecasts']
+          data: ['10~20岁', '21~30岁', '31~40岁', '41~50岁', '51~60岁']
         },
         calculable: true,
         series: [
           {
-            name: 'WEEKLY WRITE ARTICLES',
+            name: '会员年龄段分析',
             type: 'pie',
             roseType: 'radius',
             radius: [15, 95],
             center: ['50%', '38%'],
             data: [
-              { value: 320, name: 'Industries' },
-              { value: 240, name: 'Technology' },
-              { value: 149, name: 'Forex' },
-              { value: 100, name: 'Gold' },
-              { value: 59, name: 'Forecasts' }
+              { value: 320, name: '10~20岁' },
+              { value: 240, name: '21~30岁' },
+              { value: 149, name: '31~40岁' },
+              { value: 100, name: '41~50岁' },
+              { value: 59, name: '51~60岁' }
             ],
             animationEasing: 'cubicInOut',
             animationDuration: 2600
