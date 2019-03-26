@@ -5,21 +5,21 @@
     </div>
     <div style="position:relative;">
       <pan-thumb :image="avatar" class="panThumb"/>
-      <mallki class-name="mallki-text" text="vue-element-admin"/>
+      <mallki class-name="mallki-text" text="spa-admin"/>
       <div style="padding-top:35px;" class="progress-item">
-        <span>Vue</span>
+        <span>房间1-预约时间</span>
         <el-progress :percentage="70"/>
       </div>
       <div class="progress-item">
-        <span>JavaScript</span>
+        <span>房间2-预约时间</span>
         <el-progress :percentage="18"/>
       </div>
       <div class="progress-item">
-        <span>Css</span>
+        <span>房间3-预约时间</span>
         <el-progress :percentage="12"/>
       </div>
       <div class="progress-item">
-        <span>ESLint</span>
+        <span>房间4-预约时间</span>
         <el-progress :percentage="100" status="success"/>
       </div>
     </div>

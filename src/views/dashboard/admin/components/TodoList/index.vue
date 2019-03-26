@@ -2,7 +2,7 @@
   <section class="todoapp">
     <!-- header -->
     <header class="header">
-      <input class="new-todo" autocomplete="off" placeholder="Todo List" @keyup.enter="addTodo">
+      <input class="new-todo" autocomplete="off" placeholder="待办事项" @keyup.enter="addTodo">
     </header>
     <!-- main section -->
     <section v-show="todos.length" class="main">
@@ -38,23 +38,15 @@
 
 <script>
 import Todo from './Todo.vue'
+import { getList, createTodo, deleteTodo, updateTodo, finishTodo } from '@/api/todo'
 
 const STORAGE_KEY = 'todos'
 const filters = {
-  all: todos => todos,
-  active: todos => todos.filter(todo => !todo.done),
-  completed: todos => todos.filter(todo => todo.done)
+  所有: todos => todos,
+  未完成: todos => todos.filter(todo => !todo.done),
+  已完成: todos => todos.filter(todo => todo.done)
 }
-const defalutList = [
-  { text: 'star this repository', done: false },
-  { text: 'fork this repository', done: false },
-  { text: 'follow author', done: false },
-  { text: 'vue-element-admin', done: true },
-  { text: 'vue', done: true },
-  { text: 'element-ui', done: true },
-  { text: 'axios', done: true },
-  { text: 'webpack', done: true }
-]
+const defaultList = []
 export default {
   components: { Todo },
   filters: {
@@ -63,10 +55,9 @@ export default {
   },
   data() {
     return {
-      visibility: 'all',
+      visibility: '所有',
       filters,
-      // todos: JSON.parse(window.localStorage.getItem(STORAGE_KEY)) || defalutList
-      todos: defalutList
+      todos: defaultList
     }
   },
   computed: {
@@ -80,32 +71,68 @@ export default {
       return this.todos.filter(todo => !todo.done).length
     }
   },
+  created() {
+    getList().then(result => {
+      const retArray = result.data
+      const tempTodo = []
+      for (const ret of retArray) {
+        tempTodo.push({
+          text: ret.content,
+          done: (ret.status === 1),
+          id: ret['id']
+        })
+      }
+      this.todos = tempTodo
+    })
+  },
   methods: {
     setLocalStorage() {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(this.todos))
     },
     addTodo(e) {
       const text = e.target.value
-      if (text.trim()) {
-        this.todos.push({
-          text,
-          done: false
-        })
-        this.setLocalStorage()
+      const tempTodo = {
+        'content': text
       }
-      e.target.value = ''
+      createTodo(tempTodo).then(result => {
+        if (result.data['affectedRows'] >= 1) {
+          if (text.trim()) {
+            this.todos.push({
+              text,
+              done: false
+            })
+            this.setLocalStorage()
+          }
+          e.target.value = ''
+        }
+      })
     },
     toggleTodo(val) {
-      val.done = !val.done
-      this.setLocalStorage()
+      console.log('val=' + JSON.stringify(val))
+      finishTodo(val).then(result => {
+        if (result.data['affectedRows'] >= 1) {
+          val.done = !val.done
+          this.setLocalStorage()
+        }
+      })
     },
     deleteTodo(todo) {
-      this.todos.splice(this.todos.indexOf(todo), 1)
-      this.setLocalStorage()
+      deleteTodo(todo.id).then(result => {
+        if (result.data['affectedRows'] >= 1) {
+          this.todos.splice(this.todos.indexOf(todo), 1)
+          this.setLocalStorage()
+        }
+      })
     },
     editTodo({ todo, value }) {
-      todo.text = value
-      this.setLocalStorage()
+      const tempTodo = Object.assign({}, todo)
+      tempTodo['text'] = value
+      updateTodo(tempTodo).then(result => {
+        if (result.data['affectedRows'] >= 1) {
+          todo.text = value
+          this.setLocalStorage()
+        }
+      })
     },
     clearCompleted() {
       this.todos = this.todos.filter(todo => !todo.done)
@@ -113,8 +140,12 @@ export default {
     },
     toggleAll({ done }) {
       this.todos.forEach(todo => {
-        todo.done = done
-        this.setLocalStorage()
+        finishTodo(todo).then(result => {
+          if (result.data['affectedRows'] >= 1) {
+            todo.done = done
+            this.setLocalStorage()
+          }
+        })
       })
     }
   }
