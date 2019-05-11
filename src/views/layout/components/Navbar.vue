@@ -27,11 +27,12 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
+import Cookies from 'js-cookie'
 
 export default {
   data(){
     return{
-      user:"admin"
+      user: ''
     }
   },
   components: {
@@ -44,6 +45,9 @@ export default {
       'avatar'
     ])
   },
+  created() {
+    this.getUserName();
+  },
   methods: {
     toggleSideBar() {
       this.$store.dispatch('ToggleSideBar')
@@ -52,6 +56,9 @@ export default {
       this.$store.dispatch('LogOut').then(() => {
         location.reload() // 为了重新实例化vue-router对象 避免bug
       })
+    },
+    getUserName(){
+      this.user=  Cookies.get('username');
     }
   }
 }

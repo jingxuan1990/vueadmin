@@ -1,5 +1,7 @@
 import { login, logout, getInfo } from '@/api/login'
 import { getToken, setToken, removeToken } from '@/utils/auth'
+import { adminLogin } from '@/api/adminuser'
+import Cookies from 'js-cookie'
 
 const user = {
   state: {
@@ -27,13 +29,18 @@ const user = {
   actions: {
     // 登录
     Login({ commit }, userInfo) {
-      const username = userInfo.username.trim()
+      // console.log("userinfo=" + JSON.stringify(userInfo));
       return new Promise((resolve, reject) => {
-        login(username, userInfo.password).then(response => {
-          const data = response.data
-          setToken(data.token)
-          commit('SET_TOKEN', data.token)
-          resolve()
+        adminLogin(userInfo).then(response => {
+          // console.log(JSON.stringify(response));
+          if (response['data']>=1){
+            const token = response.token;
+            setToken(token);
+            commit('SET_TOKEN', token);
+            Cookies.set('username', userInfo['username']);
+            commit('SET_NAME', userInfo['username']);
+          }
+          resolve({'isLogin':response['data']>=1})
         }).catch(error => {
           reject(error)
         })
@@ -43,6 +50,7 @@ const user = {
     // 获取用户信息
     GetInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
+        // console.log("state=" + JSON.stringify(state.name))
         getInfo(state.token).then(response => {
           const data = response.data
           if (data.roles && data.roles.length > 0) { // 验证返回的roles是否是一个非空数组
@@ -50,7 +58,8 @@ const user = {
           } else {
             reject('getInfo: roles must be a non-null array !')
           }
-          commit('SET_NAME', data.name)
+
+          commit('SET_NAME', state.name)
           commit('SET_AVATAR', data.avatar)
           resolve(response)
         }).catch(error => {

@@ -55,8 +55,8 @@ export default {
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: '123456'
+        username: '',
+        password: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -85,19 +85,30 @@ export default {
     },
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
-        if (valid) {
+        // if (valid) {
           this.loading = true
-          this.$store.dispatch('Login', this.loginForm).then(() => {
-            this.loading = false
-            this.$router.push({ path: this.redirect || '/' })
+          this.$store.dispatch('Login', this.loginForm).then((result) => {
+            console.log('logi_result=' + JSON.stringify(result))
+            if (result['isLogin']) {
+              this.loading = false;
+              this.$router.push({ path: this.redirect || '/' })
+            } else {
+              this.$notify({
+                title: '登录失败',
+                message: '请检查用户名和密码是否正确!',
+                type: 'error',
+                duration: 2000
+              })
+              this.loading=false
+            }
           }).catch(() => {
             this.loading = false
           })
-        } else {
-          this.$alert('用户名或密码有误！','登录失败',{type:'error'});
-          // console.log('error submit!!')
-          return false
-        }
+        // } else {
+        //   this.$alert('用户名或密码有误！','登录失败',{type:'error'});
+        //   // console.log('error submit!!')
+        //   return false
+        // }
       })
     }
   }
