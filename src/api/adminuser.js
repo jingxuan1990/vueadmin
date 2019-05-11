@@ -37,3 +37,11 @@ export function updateAdminUser(data) {
   })
 }
 
+
+export function queryAdminUserName(data) {
+  return request({
+    url: '/admin/queryname/' + data,
+    method: 'get'
+  })
+}
+

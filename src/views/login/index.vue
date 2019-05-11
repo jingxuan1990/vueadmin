@@ -1,4 +1,5 @@
 <template>
+
   <div class="login-container">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
       <h3 class="title">SPA美容养生后台管理系统</h3>
@@ -109,6 +110,8 @@ $light_gray:#eee;
 
 /* reset element-ui css */
 .login-container {
+  background-image: url("../../assets/images/44.jpeg");
+  /*background-repeat: no-repeat;*/
   .el-input {
     display: inline-block;
     height: 47px;
@@ -119,12 +122,9 @@ $light_gray:#eee;
       -webkit-appearance: none;
       border-radius: 0px;
       padding: 12px 5px 12px 15px;
-      color: $light_gray;
+      color: black;
       height: 47px;
-      &:-webkit-autofill {
-        -webkit-box-shadow: 0 0 0px 1000px $bg inset !important;
-        -webkit-text-fill-color: #fff !important;
-      }
+
     }
   }
   .el-form-item {
@@ -140,7 +140,7 @@ $light_gray:#eee;
 <style rel="stylesheet/scss" lang="scss" scoped>
 $bg:#2d3a4b;
 $dark_gray:#889aa4;
-$light_gray:#eee;
+
 .login-container {
   position: fixed;
   height: 100%;
@@ -153,7 +153,9 @@ $light_gray:#eee;
     width: 520px;
     max-width: 100%;
     padding: 35px 35px 15px 35px;
-    margin: 120px auto;
+    margin: 150px auto;
+    background: floralwhite;
+    opacity: 0.7;
   }
   .tips {
     font-size: 14px;
@@ -175,7 +177,7 @@ $light_gray:#eee;
   .title {
     font-size: 26px;
     font-weight: 400;
-    color: $light_gray;
+    color: #1f2d3d;
     margin: 0px auto 40px auto;
     text-align: center;
     font-weight: bold;

@@ -47,7 +47,7 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="80px" style="width: 400px; margin-left:50px;">
         <el-form-item label="用户名" prop="username">
-          <el-input v-model.number="temp.username" placeholder="数字+英文组成的至少9个字符"/>
+          <el-input v-model.number="temp.username" disabled placeholder="数字+英文组成的至少9个字符"/>
         </el-form-item>
         <el-form-item label="头像" prop="photo">
           <el-upload class="avatar-uploader" action="">

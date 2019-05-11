@@ -16,6 +16,8 @@ import router from './router'
 import '@/icons' // icon
 import '@/permission' // permission control
 
+//引入font-awesome
+import 'font-awesome/css/font-awesome.css'
 /**
  * This project originally used easy-mock to simulate data,
  * but its official service is very unstable,

@@ -4,9 +4,9 @@
     <breadcrumb />
     <div class="admin">当前用户:{{user}}</div>
     <el-dropdown class="avatar-container" trigger="click">
-      
+
       <div class="avatar-wrapper">
-        <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
+        <img src="../../../assets/images/010.jpg" class="user-avatar">
         <i class="el-icon-caret-bottom"/>
       </div>
       <el-dropdown-menu slot="dropdown" class="user-dropdown">
